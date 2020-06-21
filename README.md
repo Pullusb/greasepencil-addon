@@ -1,4 +1,4 @@
-# Grease pencil tools addon
+# Grease pencil tools
 
 Blender addon - Pack of tools for grease pencil drawing.
 
@@ -10,13 +10,15 @@ Blender addon - Pack of tools for grease pencil drawing.
 
 ## Description
 
+Add option in Tab Grease Pencil
+
 ### Box deform on `Ctrl+T`
 
 Exemple with lattice subdiv and spline deformations.
 
 ![box demo](https://github.com/Pullusb/images_repo/raw/master/box_deform_demo.gif)
 
-## [Box deform youtube demo](https://youtu.be/gY9Ni5r6bc8)
+### [Box deform youtube demo](https://youtu.be/gY9Ni5r6bc8)
 
 **How to use**: (same tutorial in addon preferences)  
 Use the shortcut `Ctrl + T` in available modes  
@@ -45,6 +47,12 @@ If you return in box deform after applying with a ctrl+Z, you need to hit ctrl+T
 A cancel warning will be displayed the first time you hit Tab (to avoid mis-canceling)
 
 Multiframe edit selection works but you will only see the current frame during the modal
+
+### Straight stroke
+
+Straighten the stroke between first ans last point, keeping the points proportionally.  
+You can affect influence in the redo panel.  
+Influence amount is remembered for next use (You can shift+click on the button to reset to 100% influence)
 
 ---
 
