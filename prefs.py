@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import os
 from bpy.props import (
         BoolProperty,
         EnumProperty,
@@ -25,7 +26,7 @@ from bpy.props import (
 
 
 class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
-    bl_idname = 'greasepencil-addon'
+    bl_idname = os.path.splitext(__name__)[0]#'greasepencil-addon'#can be called 'master'
     # bl_idname = __name__
 
     pref_tabs : EnumProperty(

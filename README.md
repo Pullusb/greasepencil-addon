@@ -58,6 +58,7 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 <!-- ## DONE:
 
+- sligth code refactor 
 - Deleted/changed funny info messages in box deform (when pressing 'H' or trying to ctrl+T on object having already a Lattice)
 - Deleted some useless comments
 - CamelCased the classes
