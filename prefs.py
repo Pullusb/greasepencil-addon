@@ -43,10 +43,17 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         default=True)
     
     default_deform_type : EnumProperty(
-        items=(('KEY_LINEAR', "Linear (perspective mode)", "Use Linear interpolation, like corner deform / perspective tools of classic 2D", 'IPO_LINEAR',0),
-               ('KEY_BSPLINE', "Spline (smooth deform)", "Use spline interpolation transformation\nBest when lattice is subdivided", 'IPO_CIRC',1),
+        items=(('KEY_LINEAR', "Linear (perspective mode)", "Linear interpolation, like corner deform / perspective tools of classic 2D", 'IPO_LINEAR',0),
+               ('KEY_BSPLINE', "Spline (smooth deform)", "Spline interpolation transformation\nBest when lattice is subdivided", 'IPO_CIRC',1),
                ),
-               name='Starting interpolation', default='KEY_LINEAR', description='Choose default interpolation when entering mode')
+        name='Starting interpolation', default='KEY_LINEAR', description='Choose default interpolation when entering mode')
+    
+    # About interpolation : https://docs.blender.org/manual/en/2.83/animation/shape_keys/shape_keys_panel.html#fig-interpolation-type
+
+    auto_swap_deform_type : BoolProperty(
+        name='Auto swap interpolation mode',
+        description="Automatically set interpolation to 'spline' when subdividing lattice\n Back to 'linear' when",
+        default=True)
 
     def draw(self, context):
             layout = self.layout
@@ -60,6 +67,9 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 # layout.separator()
                 layout.prop(self, "default_deform_type")
                 layout.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
+                
+                layout.prop(self, "auto_swap_deform_type")
+                layout.label(text="Once 'M' is hit, auto swap is desactivated to stay in your chosen mode", icon='INFO')
 
             if self.pref_tabs == 'TUTO':
 

@@ -56,9 +56,22 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ---
 
-<!-- ## DONE:
+## Changelog
 
-- sligth code refactor 
+0.0.2 - 2020-06-23:
+
+- box deform:
+
+  - fix: paint mode deforming strokes on another layer
+  - fix: force view overlay during modal to avoid losing sight of lattice
+  - feature: autoswap mode between Linear and Bspline
+  - UI: preference checkbox to disable new autoswap feature
+  - code: refactor, deleted useless property group
+
+0.0.1 - 2020-06-21:
+
+- Initial version from standalone Box_deform 0.2.4
+- sligth code refactor
 - Deleted/changed funny info messages in box deform (when pressing 'H' or trying to ctrl+T on object having already a Lattice)
 - Deleted some useless comments
 - CamelCased the classes
@@ -68,42 +81,3 @@ Influence amount is remembered for next use (You can shift+click on the button t
 - added `box deform` to VIEW3D_MT_transform_object menu (with condition to appear only if context object exists and is GP)
 - added `box deform` to VIEW3D_MT_edit_gpencil_transform menu
 - added `straight stroke` to VIEW3D_MT_edit_gpencil_stroke menu
-
-
--->
-
-<!-- ## Box deform Changelog:
-
-0.2.4 - 2020-06-20:
-
-- fix : Disable 'ctrl+Z' shortcut during modal (avoid crash when undoing in)
-
-0.2.3 - 2020-06-17:
-
-- fix : Bug when a layer has no frames (prevent scanning frameless layers)
-- UX : Silent cancel if not GPencil object or wrong mode is used
-
-0.2.2 - 2020-06-09:
-
-- fix : Paint mode, use bottom stroke when using '_draw on back_' option
-- fix : Paint mode, scan strokes from active layer only
-
-0.2.1 - 2020-05-26:
-
-- fix : correct multiframe edit bug
-
-0.2.0 - 2020-05-26:
-
-- Feature : Allow other modes, Object deform whole GP object, GP Paint get the last stroke
-- Feature (fix) : possibility to relaunch the modal after returning in lattice edit with ctrl+Z
-- UX : temporarily enable release confirm for more natural control
-- UX : temporarily lower mouse/tablet drag threshold for more responsive control when moving points
-- syntax : renamed ops
-
-0.1.2 - 2020-05-25:
-
-- fix : right depth, apply matrix_world to GP point coordinate
-
-0.1.1 - 2020-05-23:
-
-- first stable version -->
