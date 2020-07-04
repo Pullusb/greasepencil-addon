@@ -398,7 +398,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         # Valid
         if event.type in {'RET', 'SPACE'}:
             if event.value == 'PRESS':
-                #bpy.ops.ed.flush_edits()# TODO: find a way to get rid of undo-registered lattices tweaks
+                self.prefs.boxdeform_running = False
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
                 apply_cage(self.gp_obj, self.cage)#must be in object mode
@@ -433,6 +433,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         self.lat.interpolation_type_u = self.lat.interpolation_type_v = self.lat.interpolation_type_w = interp
 
     def cancel(self, context):
+        self.prefs.boxdeform_running = False
         self.restore_prefs(context)
         back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
         cancel_cage(self.gp_obj, self.cage)
@@ -471,6 +472,9 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
             return {'CANCELLED'}
 
         self.prefs = get_addon_prefs()#get_prefs
+        if self.prefs.boxdeform_running:
+            return {'CANCELLED'}
+
         self.org_lattice_toolset = None
         self.gp_mode = 'EDIT_GPENCIL'
 
@@ -541,6 +545,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
         self.set_prefs(context)
+        self.prefs.boxdeform_running = True
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 

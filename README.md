@@ -58,9 +58,13 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ## Changelog
 
+0.0.4 - 2020-07-04:
+
+- fix: added a property in pref to detect if modal is already running so pressing the UI button again will not crash.
+
 0.0.3 - 2020-07-04:
 
-- syntax: correction on HUD text, Preferences, Title cased all words in buttons to fit blenders UI. 
+- syntax: correction on HUD text, Preferences, Title cased all words in buttons to fit blenders UI.
 
 0.0.2 - 2020-06-23:
 

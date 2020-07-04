@@ -55,6 +55,8 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         description="Automatically set interpolation to 'spline' when subdividing lattice\n Back to 'linear' when",
         default=True)
 
+    boxdeform_running : BoolProperty(default = False)
+
     def draw(self, context):
             layout = self.layout
             # layout.use_property_split = True
@@ -102,8 +104,11 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 col.label(text="- A cancel warning will be displayed the first time you hit Tab")
 
 
+
 def register():
     bpy.utils.register_class(GreasePencilAddonPrefs)
+    # Force box deform running to false
+    bpy.context.preferences.addons[os.path.splitext(__name__)[0]].preferences.boxdeform_running = False
 
 def unregister():
     bpy.utils.unregister_class(GreasePencilAddonPrefs)
