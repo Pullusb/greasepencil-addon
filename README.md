@@ -58,6 +58,11 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ## Changelog
 
+0.0.5 - 2020-07-04:
+
+- fix: Bug throwing error when trying modal revival after ctrl+Z back to lattice.
+- refactor: Cleaner use of `is_running` variable, attached to WM variable instead of prefs (Thanks to [Antonio Vasquez](https://twitter.com/antonioya_blend?lang=en))
+
 0.0.4 - 2020-07-04:
 
 - fix: added a property in pref to detect if modal is already running so pressing the UI button again will not crash.

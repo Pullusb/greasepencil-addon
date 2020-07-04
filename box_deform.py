@@ -48,8 +48,8 @@ def assign_vg(obj, vg_name):
     return vg
 
 def view_cage(obj):
-
-    lattice_interp = get_addon_prefs().default_deform_type
+    prefs = get_addon_prefs()
+    lattice_interp = prefs.default_deform_type
 
     gp = obj.data
     gpl = gp.layers
@@ -242,8 +242,9 @@ def view_cage(obj):
     bpy.ops.object.mode_set(mode='EDIT')# go in lattice edit mode
     bpy.ops.lattice.select_all(action='SELECT')# select all points
 
-    ## Eventually change tool mode to tweak for direct point editing (reset after before leaving)
-    bpy.ops.wm.tool_set_by_id(name="builtin.select")# Tweaktoolcode
+    if prefs.use_clic_drag:
+        ## Eventually change tool mode to tweak for direct point editing (reset after before leaving)
+        bpy.ops.wm.tool_set_by_id(name="builtin.select")# Tweaktoolcode
     return cage
 
 
@@ -398,7 +399,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         # Valid
         if event.type in {'RET', 'SPACE'}:
             if event.value == 'PRESS':
-                self.prefs.boxdeform_running = False
+                context.window_manager.boxdeform_running = False
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
                 apply_cage(self.gp_obj, self.cage)#must be in object mode
@@ -433,7 +434,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         self.lat.interpolation_type_u = self.lat.interpolation_type_v = self.lat.interpolation_type_w = interp
 
     def cancel(self, context):
-        self.prefs.boxdeform_running = False
+        context.window_manager.boxdeform_running = False
         self.restore_prefs(context)
         back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
         cancel_cage(self.gp_obj, self.cage)
@@ -447,6 +448,7 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         self.drag_threshold_mouse = context.preferences.inputs.drag_threshold_mouse 
         self.drag_threshold_tablet = context.preferences.inputs.drag_threshold_tablet
         self.use_overlays = context.space_data.overlay.show_overlays
+        # maybe store in windows manager to keep around in case of modal revival ?
 
     def restore_prefs(self, context):
         # preferences <-< store_valierables
@@ -471,11 +473,18 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
             self.report({'ERROR'}, "No active objects found")
             return {'CANCELLED'}
 
-        self.prefs = get_addon_prefs()#get_prefs
-        if self.prefs.boxdeform_running:
+        if context.window_manager.boxdeform_running:
             return {'CANCELLED'}
 
+        self.prefs = get_addon_prefs()#get_prefs
+        self.auto_interp = self.prefs.auto_swap_deform_type
         self.org_lattice_toolset = None
+        ## usability toggles
+        if self.prefs.use_clic_drag:#Store the active tool since we will change it
+            self.org_lattice_toolset = bpy.context.workspace.tools.from_space_view3d_mode(bpy.context.mode, create=False).idname# Tweaktoolcode    
+        
+        #store (scene properties needed in case of ctrlZ revival)
+        self.store_prefs(context)
         self.gp_mode = 'EDIT_GPENCIL'
 
         # --- special Case of lattice revive modal, just after ctrl+Z back into lattice with modal stopped
@@ -491,6 +500,9 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
             self.lat = self.cage.data
             self.set_prefs(context)
 
+            if self.prefs.use_clic_drag:
+                bpy.ops.wm.tool_set_by_id(name="builtin.select")
+            context.window_manager.boxdeform_running = True
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
 
@@ -537,15 +549,8 @@ valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         
         self.lat = self.cage.data
 
-        ## usability toggles
-        if self.prefs.use_clic_drag:#Store the active tool since we will change it
-            self.org_lattice_toolset = bpy.context.workspace.tools.from_space_view3d_mode(bpy.context.mode, create=False).idname# Tweaktoolcode    
-        
-        self.auto_interp = self.prefs.auto_swap_deform_type
-        #store (scene properties needed in case of ctrlZ revival)
-        self.store_prefs(context)
         self.set_prefs(context)
-        self.prefs.boxdeform_running = True
+        context.window_manager.boxdeform_running = True
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
@@ -571,6 +576,7 @@ def unregister_keymaps():
 def register():
     if bpy.app.background:
         return
+    bpy.types.WindowManager.boxdeform_running = bpy.props.BoolProperty(default=False)
     bpy.utils.register_class(GP_OT_latticeGpDeform)
     register_keymaps()
 
@@ -579,3 +585,7 @@ def unregister():
         return
     unregister_keymaps()
     bpy.utils.unregister_class(GP_OT_latticeGpDeform)
+    wm = bpy.context.window_manager
+    p = 'boxdeform_running'
+    if p in wm:
+        del wm[p]

@@ -21,7 +21,7 @@ bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Pack of tools for Grease pencil drawing",
 "author": "Samuel Bernou",
-"version": (0, 0, 4),
+"version": (0, 0, 5),
 "blender": (2, 83, 0),
 "location": "sidebar (N) > Grease pencil > Grease pencil",
 "warning": "",
