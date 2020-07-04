@@ -79,28 +79,27 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 col.label(text="Usage:", icon='MOD_LATTICE')
                 col.label(text="Use the shortcut 'Ctrl+T' in available modes (listed below)")
                 col.label(text="The lattice box is generated facing your view (be sure to face canvas if you want to stay on it)")
-                col.label(text="Use shortcuts below to deform(a help will be displayed in the topbar)")
+                col.label(text="Use shortcuts below to deform (a help will be displayed in the topbar)")
 
                 col.separator()
                 col.label(text="Shortcuts:", icon='HAND')
                 col.label(text="Spacebar / Enter : Confirm")
-                col.label(text="Delete / Backspace / Tab(twice) / ctrl+T : Cancel")
+                col.label(text="Delete / Backspace / Tab(twice) / Ctrl+T : Cancel")
                 col.label(text="M : Toggle between Linear and Spline mode at any moment")
                 col.label(text="1-9 top row number : Subdivide the box")
                 col.label(text="Ctrl + arrows-keys : Subdivide the box incrementally in individual X/Y axis")
 
                 col.separator()
                 col.label(text="Modes and deformation target:", icon='PIVOT_BOUNDBOX')
-                col.label(text="- Object mode : The whole GP object is deformed")
+                col.label(text="- Object mode : The whole GP object is deformed (including all frames)")
                 col.label(text="- GPencil Edit mode : Deform Selected points")
                 col.label(text="- Gpencil Paint : Deform last Strokes")
                 # col.label(text="- Lattice edit : Revive the modal after a ctrl+Z")
 
                 col.separator()
                 col.label(text="Notes:", icon='TEXT')
-                col.label(text="If you return in box deform after applying (with a ctrl+Z), you need to hit 'Ctrl+T' again to revive the modal.")
-
-                col.label(text="A cancel warning will be displayed the first time you hit Tab")
+                col.label(text="- If you return in box deform after applying (with a ctrl+Z), you need to hit 'Ctrl+T' again to revive the modal.")
+                col.label(text="- A cancel warning will be displayed the first time you hit Tab")
 
 
 def register():

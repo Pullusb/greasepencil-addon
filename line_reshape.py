@@ -109,7 +109,7 @@ def get_last_index(context=None):
 
 class GP_OT_straightStroke(bpy.types.Operator):
     bl_idname = "gp.straight_stroke"
-    bl_label = "Straight stroke"
+    bl_label = "Straight Stroke"
     bl_description = "Make stroke a straight line between first and last point, tweak influence in the redo panel\
         \nshift+click to reset infuence to 100%"
     bl_options = {"REGISTER", "UNDO"}

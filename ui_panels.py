@@ -40,9 +40,7 @@ class GP_PT_sidebarPanel(bpy.types.Panel):
         # if context.scene.camera:
         row = layout.row(align=True)
         row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS')# FULLSCREEN_EXIT?
-        row.operator('view3d.view_center_camera', text = 'Zoom fit', icon = 'FULLSCREEN_ENTER')
-        
-        # TODO: add lock view
+        row.operator('view3d.view_center_camera', text = 'Zoom Fit', icon = 'FULLSCREEN_ENTER')
 
 
 def menu_boxdeform_entry(self, context):
@@ -52,15 +50,14 @@ def menu_boxdeform_entry(self, context):
     # {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
     if obj and obj.type == 'GPENCIL' and context.mode in {'OBJECT', 'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator('gp.latticedeform', text='Box deform')
+        layout.operator('gp.latticedeform', text='Box Deform')
 
 def menu_stroke_entry(self, context):
     layout = self.layout
-    obj = bpy.context.object
-    # {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
+    # Gpencil modes : {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
     if context.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator('gp.straight_stroke', text='Straight stroke')
+        layout.operator('gp.straight_stroke', text='Straight Stroke')
 
 def register():
     bpy.utils.register_class(GP_PT_sidebarPanel)

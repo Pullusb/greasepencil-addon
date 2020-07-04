@@ -58,6 +58,10 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ## Changelog
 
+0.0.3 - 2020-07-04:
+
+- syntax: correction on HUD text, Preferences, Title cased all words in buttons to fit blenders UI. 
+
 0.0.2 - 2020-06-23:
 
 - box deform:

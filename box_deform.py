@@ -285,7 +285,7 @@ def cancel_cage(gp_obj, cage):
 class GP_OT_latticeGpDeform(bpy.types.Operator):
     """Create a lattice to use as quad corner transform"""
     bl_idname = "gp.latticedeform"
-    bl_label = "Box deform"
+    bl_label = "Box Deform"
     bl_description = "Use lattice for free box transforms on grease pencil points (Ctrl+T)"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -297,9 +297,9 @@ class GP_OT_latticeGpDeform(bpy.types.Operator):
     tab_press_ct = 0
 
     def modal(self, context, event):
-        display_text = f"Deform Cage size: {self.lat.points_u}x{self.lat.points_v} (1-9 or ctrl + ←→↑↓])  | \
+        display_text = f"Deform Cage size: {self.lat.points_u}x{self.lat.points_v} (1-9 or ctrl + ←→↑↓)  | \
 mode (M) : {'Linear' if self.lat.interpolation_type_u == 'KEY_LINEAR' else 'Spline'} | \
-valid:Spacebar/Enter/Tab, cancel:Del/Backspace"
+valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
         context.area.header_text_set(display_text)
 
 
