@@ -90,7 +90,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         # download_url(dl_url, str(brushzip))
         err = simple_dl_url(dl_url, str(brushzip))
         if err:
-            self.report({'ERROR'}, 'Could not download brush pack\nCheck your internet connexion')
+            self.report({'ERROR'}, 'Could not download brush pack.\nCheck your internet connection')
             return {"CANCELLED"}
 
         unzip(brushzip, temp)
