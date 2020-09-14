@@ -18,16 +18,10 @@
 
 '''Based on Box_deform standalone addon - Author: Samuel Bernou'''
 
+from .utils import get_addon_prefs
+
 import bpy
 import numpy as np
-
-def get_addon_prefs():
-    import os
-    addon_name = os.path.splitext(__name__)[0]
-    preferences = bpy.context.preferences
-    addon_prefs = preferences.addons[addon_name].preferences
-    return (addon_prefs)
-
 
 def location_to_region(worldcoords):
     from bpy_extras import view3d_utils

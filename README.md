@@ -8,11 +8,9 @@ Blender addon - Pack of tools for grease pencil drawing.
 
 ---  
 
-## Description
-
 Add option in Tab Grease Pencil
 
-### Box deform on `Ctrl+T`
+## Box deform on `Ctrl+T`
 
 Exemple with lattice subdiv and spline deformations.
 
@@ -48,15 +46,41 @@ A cancel warning will be displayed the first time you hit Tab (to avoid mis-canc
 
 Multiframe edit selection works but you will only see the current frame during the modal
 
-### Straight stroke
+
+## Rotate canvas
+
+![demo canvas rotate gif](https://raw.githubusercontent.com/Pullusb/images_repo/master/RC_rotate_canvas_demo_view_and_cam.gif)
+
+Customise shortcut in addons preferences, Default `ctrl + alt + right-Click`.  
+Shortcut changed are refreshed upon modifications.
+
+![preferences canvas rotate gif](https://raw.githubusercontent.com/Pullusb/images_repo/master/RC_rotate_canvas_pref_shortcut.png)
+
+**Use Hud**: Show angle value and lines.
+
+**Reset view** (free navigation only): Click and release immediately without rotation to reset (up view point to world Z).
+
+
+## Straight stroke
 
 Straighten the stroke between first ans last point, keeping the points proportionally.  
 You can affect influence in the redo panel.  
 Influence amount is remembered for next use (You can shift+click on the button to reset to 100% influence)
 
+
+## Import textured brush pack
+
+Download and append online [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)
+
+
 ---
 
 ## Changelog
+
+
+1.0.0 - 2020-09-15:
+
+- Integrated [rotate canvas](https://github.com/Pullusb/rotate_canvas)
 
 0.1.1 - 2020-09-14:
 

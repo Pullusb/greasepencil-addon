@@ -24,6 +24,13 @@ from bpy.props import (
         # IntProperty,
         )
 
+from .utils import get_addon_prefs
+
+
+## keymap binder for rotate canvas
+def auto_rebind(self, context):
+    unregister_keymaps()
+    register_keymaps()
 
 class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     bl_idname = os.path.splitext(__name__)[0]#'greasepencil-addon'#can be called 'master'
@@ -55,6 +62,49 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         description="Automatically set interpolation to 'spline' when subdividing lattice\n Back to 'linear' when",
         default=True)
 
+    ## rotate canvas variables
+
+    ## Use HUD
+    canvas_use_hud: BoolProperty(
+        name = "Use Hud",
+        description = "Display angle lines and angle value as text on viewport",
+        default = False)
+
+    ## Canvas rotate
+    canvas_use_shortcut: BoolProperty(
+        name = "Use Default Shortcut",
+        description = "Use default shortcut: mouse double-click + modifier",
+        default = True,
+        update=auto_rebind)
+
+    mouse_click : EnumProperty(
+        name="Mouse button", description="click on right/left/middle mouse button in combination with a modifier to trigger alignement",
+        default='RIGHTMOUSE',
+        items=(
+            ('RIGHTMOUSE', 'Right click', 'Use click on Right mouse button', 'MOUSE_RMB', 0),
+            ('LEFTMOUSE', 'Left click', 'Use click on Left mouse button', 'MOUSE_LMB', 1),
+            ('MIDDLEMOUSE', 'Mid click', 'Use click on Mid mouse button', 'MOUSE_MMB', 2),
+            ),
+        update=auto_rebind)
+    
+    use_shift: BoolProperty(
+            name = "combine with shift",
+            description = "add shift",
+            default = False,
+            update=auto_rebind)
+
+    use_alt: BoolProperty(
+            name = "combine with alt",
+            description = "add alt",
+            default = True,
+            update=auto_rebind)
+
+    use_ctrl: BoolProperty(
+            name = "combine with ctrl",
+            description = "add ctrl",
+            default = True,
+            update=auto_rebind)
+
     def draw(self, context):
             layout = self.layout
             # layout.use_property_split = True
@@ -62,6 +112,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             row.prop(self, "pref_tabs", expand=True)
 
             if self.pref_tabs == 'PREF':
+                ## BOX DEFORM
                 layout.label(text='Box deform tool preferences')
                 layout.prop(self, "use_clic_drag")
                 # layout.separator()
@@ -70,6 +121,33 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 
                 layout.prop(self, "auto_swap_deform_type")
                 layout.label(text="Once 'M' is hit, auto swap is desactivated to stay in your chosen mode", icon='INFO')
+
+                ## ROTATE CANVAS
+                layout.separator()
+                box = layout.box()
+                box.label(text='Rotate canvas:')
+
+                box.prop(self, "canvas_use_shortcut", text='Bind shortcuts')
+
+                if self.canvas_use_shortcut:
+                    
+                    row = box.row()
+                    row.label(text="(Auto rebind when changing shortcut)")#icon=""
+                    # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
+                    row = box.row(align = True)
+                    row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
+                    row.prop(self, "use_alt", text='Alt')#, expand=True
+                    row.prop(self, "use_shift", text='Shift')#, expand=True
+                    row.prop(self, "mouse_click",text='')#expand=True
+
+                    if not self.use_ctrl and not self.use_alt and not self.use_shift:
+                        box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
+
+                else:
+                    box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
+                    box.label(text="view3d.rotate_canvas")
+                box.prop(self, 'canvas_use_hud')
+
 
             if self.pref_tabs == 'TUTO':
 
@@ -102,11 +180,43 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 col.label(text="- A cancel warning will be displayed the first time you hit Tab")
 
 
+### rotate canvas keymap
+
+
+addon_keymaps = []
+def register_keymaps():
+    pref = get_addon_prefs()
+    if not pref.canvas_use_shortcut:
+        return
+    addon = bpy.context.window_manager.keyconfigs.addon
+
+    km = bpy.context.window_manager.keyconfigs.addon.keymaps.get("3D View")
+    if not km:
+        km = addon.keymaps.new(name = "3D View", space_type = "VIEW_3D")
+    
+    if 'view3d.rotate_canvas' not in km.keymap_items:
+        km = addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+        kmi = km.keymap_items.new('view3d.rotate_canvas',
+        type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, any=False)
+
+        addon_keymaps.append(km)
+
+def unregister_keymaps():
+    for km in addon_keymaps:
+        for kmi in km.keymap_items:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
+
+
+### REGISTER ---
 
 def register():
     bpy.utils.register_class(GreasePencilAddonPrefs)
     # Force box deform running to false
     bpy.context.preferences.addons[os.path.splitext(__name__)[0]].preferences.boxdeform_running = False
+    register_keymaps()
 
 def unregister():
+    unregister_keymaps()
     bpy.utils.unregister_class(GreasePencilAddonPrefs)

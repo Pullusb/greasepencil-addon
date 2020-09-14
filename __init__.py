@@ -21,7 +21,7 @@ bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Pack of tools for Grease pencil drawing",
 "author": "Samuel Bernou",
-"version": (0, 1, 1),
+"version": (1, 0, 0),
 "blender": (2, 83, 0),
 "location": "sidebar (N) > Grease pencil > Grease pencil",
 "warning": "",
@@ -31,10 +31,10 @@ bl_info = {
 # "support": "COMMUNITY",
 }
 
-
 from .  import (prefs,
                 box_deform,
                 line_reshape,
+                rotate_canvas,
                 import_brush_pack,
                 ui_panels,
                 )
@@ -43,12 +43,14 @@ def register():
     prefs.register()
     box_deform.register()
     line_reshape.register()
+    rotate_canvas.register()
     import_brush_pack.register()
     ui_panels.register()
 
 def unregister():
     ui_panels.unregister()
     import_brush_pack.unregister()
+    rotate_canvas.unregister()
     box_deform.unregister()
     line_reshape.unregister()
     prefs.unregister()
