@@ -58,7 +58,7 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ## Changelog
 
-0.1.0 - 2020-09-14:
+0.1.1 - 2020-09-14:
 
 - added operator to download and append [pepeland (Daniel Martinez Lara) public brushpack](https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)
 

@@ -8,7 +8,10 @@ def unzip(zip_path, extract_dir_path):
 
 def simple_dl_url(url, dest):
     import urllib
-    urllib.request.urlretrieve(url, dest)
+    try:
+        urllib.request.urlretrieve(url, dest)
+    except:
+        return 1
 
 def download_url(url, dest):
     '''download passed url to dest file (include filename)'''
@@ -34,45 +37,12 @@ def get_brushes(blend_fp):
 
 
 def install_gp_brush_pack():
-    from pathlib import Path
-    import tempfile
-    
-    dl_url = 'https://storage.googleapis.com/5649de716dcaf85da2faee95/_%2F4e433d7a7bae4491801967ee061044f3.zip?GoogleAccessId=956532172770-27ie9eb8e4u326l89p7b113gcb04cdgd%40developer.gserviceaccount.com&Expires=1600188235&Signature=jAdME8VMKGD6WsQYIs4wY26D2aBD6SenQip1%2BEi4GnhOyF29Ydkw4ZqmIa9zB2alALlkusbdggzwSpn7L4tvk%2FMAHhLnTjDwVHyDEqJKSl6Usei1%2FxlxrfNwHDDqOl9R5o5Zbdtoqp7H6LoSn9NZXwTuTh55k17wqG7yOkLHZjH4XNLurBv01y8l6ym2vuE1tvHYbR%2BOCW%2BQnmA3ojvGUNvpWJMdZi3f9u7%2FnpC37V71lGaLCfxB9vghG7eMT%2FPKuh%2F5sLsCXcfiuN60CWum3Xz5SYp%2FmxGHYN56bSOs8c%2BNi8pxjMYW0JmilLmJAQHg123oHRBdbt6lqIjx%2BNGQlg%3D%3D'
-    blendname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.blend'
-    zipname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.zip'
-
-    temp = tempfile.gettempdir()
-    if not temp:
-        print('no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
-        return
-    
-    temp = Path(temp)
-    
-    brushzip = temp / zipname
-    blend_fp = Path(temp) / blendname
-    
-    ## use blend if exists in tempdir
-    if blend_fp.exists():
-        get_brushes(blend_fp)
-        return
-
-    ## unzip if zip already there and use blend
-    if brushzip.exists():
-        unzip(brushzip, temp)
-        get_brushes(blend_fp)
-        return
-    
-    ## download, unzip, use blend
-    # download_url(dl_url, str(brushzip))
-    simple_dl_url(dl_url, str(brushzip))
-    unzip(brushzip, temp)
-    get_brushes(blend_fp)
     return
 
 
 class GP_OT_install_brush_pack(bpy.types.Operator):
     bl_idname = "gp.import_brush_pack"
-    bl_label = "Import grease pencil brush pack"
+    bl_label = "Import textured brush pack"
     bl_description = "Download and import Grease Pencil brush pack from blender cloud"
     bl_options = {"REGISTER", "INTERNAL"}
 
@@ -88,6 +58,43 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
             return {"CANCELLED"}
 
         install_gp_brush_pack()
+        from pathlib import Path
+        import tempfile
+        
+        dl_url = 'https://storage.googleapis.com/5649de716dcaf85da2faee95/_%2F4e433d7a7bae4491801967ee061044f3.zip?GoogleAccessId=956532172770-27ie9eb8e4u326l89p7b113gcb04cdgd%40developer.gserviceaccount.com&Expires=1600188235&Signature=jAdME8VMKGD6WsQYIs4wY26D2aBD6SenQip1%2BEi4GnhOyF29Ydkw4ZqmIa9zB2alALlkusbdggzwSpn7L4tvk%2FMAHhLnTjDwVHyDEqJKSl6Usei1%2FxlxrfNwHDDqOl9R5o5Zbdtoqp7H6LoSn9NZXwTuTh55k17wqG7yOkLHZjH4XNLurBv01y8l6ym2vuE1tvHYbR%2BOCW%2BQnmA3ojvGUNvpWJMdZi3f9u7%2FnpC37V71lGaLCfxB9vghG7eMT%2FPKuh%2F5sLsCXcfiuN60CWum3Xz5SYp%2FmxGHYN56bSOs8c%2BNi8pxjMYW0JmilLmJAQHg123oHRBdbt6lqIjx%2BNGQlg%3D%3D'
+        blendname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.blend'
+        zipname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.zip'
+
+        temp = tempfile.gettempdir()
+        if not temp:
+            print('no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
+            return
+        
+        temp = Path(temp)
+        
+        brushzip = temp / zipname
+        blend_fp = Path(temp) / blendname
+        
+        ## use blend if exists in tempdir
+        if blend_fp.exists():
+            get_brushes(blend_fp)
+            return
+
+        ## unzip if zip already there and use blend
+        if brushzip.exists():
+            unzip(brushzip, temp)
+            get_brushes(blend_fp)
+            return
+        
+        ## download, unzip, use blend
+        # download_url(dl_url, str(brushzip))
+        err = simple_dl_url(dl_url, str(brushzip))
+        if err:
+            self.report({'ERROR'}, 'Could not download brush pack\nCheck your internet connexion')
+            return {"CANCELLED"}
+
+        unzip(brushzip, temp)
+        get_brushes(blend_fp)
         return {"FINISHED"}
 
 
