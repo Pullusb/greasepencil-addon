@@ -78,7 +78,7 @@ Download and append online [Grease pencil textured brush pack]((https://cloud.bl
 ## Changelog
 
 
-1.0.0 - 2020-09-15:
+1.0.1 - 2020-09-15:
 
 - Integrated [rotate canvas](https://github.com/Pullusb/rotate_canvas)
 

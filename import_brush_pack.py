@@ -10,8 +10,9 @@ def simple_dl_url(url, dest):
     import urllib
     try:
         urllib.request.urlretrieve(url, dest)
-    except:
-        return 1
+    except Exception as e:
+        print('Error trying to download\n', e)
+        return e
 
 def download_url(url, dest):
     '''download passed url to dest file (include filename)'''
@@ -20,8 +21,13 @@ def download_url(url, dest):
     import time
     start_time = time.time()
     
-    with urllib.request.urlopen(url) as response, open(dest, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
+    try:
+        with urllib.request.urlopen(url) as response, open(dest, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+    except Exception as e:
+        print('Error trying to download\n', e)
+        return e
+
     print(f"Download time {time.time() - start_time:.2f}s",)
 
 
@@ -87,10 +93,10 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
             return
         
         ## download, unzip, use blend
-        # download_url(dl_url, str(brushzip))
+        # err = download_url(dl_url, str(brushzip))
         err = simple_dl_url(dl_url, str(brushzip))
         if err:
-            self.report({'ERROR'}, 'Could not download brush pack.\nCheck your internet connection')
+            self.report({'ERROR'}, 'Could not download brush pack. Check your internet connection.')
             return {"CANCELLED"}
 
         unzip(brushzip, temp)
