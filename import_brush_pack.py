@@ -7,7 +7,12 @@ def unzip(zip_path, extract_dir_path):
         zip_ref.extractall(extract_dir_path)
 
 def simple_dl_url(url, dest):
-    import urllib
+    ## need to import urlib.request or linux module does not found 'request' using urllib directly
+    import urllib.request
+    ## need to create an SSl context or linux fail returning unverified ssl
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
+
     try:
         urllib.request.urlretrieve(url, dest)
     except Exception as e:
@@ -16,7 +21,9 @@ def simple_dl_url(url, dest):
 
 def download_url(url, dest):
     '''download passed url to dest file (include filename)'''
-    import urllib
+    import urllib.request
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
     import shutil
     import time
     start_time = time.time()
@@ -40,11 +47,8 @@ def get_brushes(blend_fp):
     ## force fake user for the brushes
     for b in data_to.brushes:
         b.use_fake_user = True
-
-
-def install_gp_brush_pack():
-    return
-
+    
+    return len(data_to.brushes)
 
 class GP_OT_install_brush_pack(bpy.types.Operator):
     bl_idname = "gp.import_brush_pack"
@@ -63,7 +67,6 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
             self.report({'WARNING'}, 'Brushes already loaded')
             return {"CANCELLED"}
 
-        install_gp_brush_pack()
         from pathlib import Path
         import tempfile
         
@@ -73,8 +76,8 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
 
         temp = tempfile.gettempdir()
         if not temp:
-            print('no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
-            return
+            self.report({'ERROR'}, 'no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
+            return {"CANCELLED"}
         
         temp = Path(temp)
         
@@ -83,14 +86,18 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         
         ## use blend if exists in tempdir
         if blend_fp.exists():
-            get_brushes(blend_fp)
-            return
+            bct = get_brushes(blend_fp)
+            if bct:
+                self.report({'INFO'}, f'{bct} brushes installed')
+            return {"FINISHED"}
 
         ## unzip if zip already there and use blend
         if brushzip.exists():
             unzip(brushzip, temp)
-            get_brushes(blend_fp)
-            return
+            bct = get_brushes(blend_fp)
+            if bct:
+                self.report({'INFO'}, f'{bct} brushes installed')
+            return {"FINISHED"}
         
         ## download, unzip, use blend
         # err = download_url(dl_url, str(brushzip))
@@ -100,7 +107,9 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
             return {"CANCELLED"}
 
         unzip(brushzip, temp)
-        get_brushes(blend_fp)
+        bct = get_brushes(blend_fp)
+        if bct:
+            self.report({'INFO'}, f'{bct} brushes installed')
         return {"FINISHED"}
 
 

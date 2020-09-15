@@ -24,8 +24,12 @@ from bpy.props import (
         # IntProperty,
         )
 
-from .utils import get_addon_prefs
 
+def get_addon_prefs():
+    import os
+    addon_name = os.path.splitext(__name__)[0]
+    addon_prefs = bpy.context.preferences.addons[addon_name].preferences
+    return (addon_prefs)
 
 ## keymap binder for rotate canvas
 def auto_rebind(self, context):

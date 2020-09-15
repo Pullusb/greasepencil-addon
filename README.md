@@ -70,7 +70,8 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 ## Import textured brush pack
 
-Download and append online [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)
+Download and append online [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
+This is available in the sidebar > Tool > Brushes panel int the brush dropdown menu (where you can reset brush)
 
 
 ---
@@ -78,9 +79,12 @@ Download and append online [Grease pencil textured brush pack]((https://cloud.bl
 ## Changelog
 
 
-1.0.1 - 2020-09-15:
+1.0.2 - 2020-09-15:
 
 - Integrated [rotate canvas](https://github.com/Pullusb/rotate_canvas)
+- fix: some brush pack import ops bug
+- fix: brush pack download failing on linux (needed specific method of `urllib` import and `ssl` certificate)
+- code: slight refactor for get_addonpref function (placed and loaded from `prefs.py` file)
 
 0.1.1 - 2020-09-14:
 

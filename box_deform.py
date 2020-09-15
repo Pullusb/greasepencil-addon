@@ -18,7 +18,7 @@
 
 '''Based on Box_deform standalone addon - Author: Samuel Bernou'''
 
-from .utils import get_addon_prefs
+from .prefs import get_addon_prefs
 
 import bpy
 import numpy as np

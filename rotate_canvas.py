@@ -1,4 +1,4 @@
-from .utils import get_addon_prefs
+from .prefs import get_addon_prefs
 
 bl_info = {
     "name": "Rotate Canvas",
