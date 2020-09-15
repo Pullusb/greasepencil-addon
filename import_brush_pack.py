@@ -52,7 +52,7 @@ def get_brushes(blend_fp):
 
 class GP_OT_install_brush_pack(bpy.types.Operator):
     bl_idname = "gp.import_brush_pack"
-    bl_label = "Import textured brush pack"
+    bl_label = "Download and import texture brush pack"
     bl_description = "Download and import Grease Pencil brush pack from blender cloud"
     bl_options = {"REGISTER", "INTERNAL"}
 
