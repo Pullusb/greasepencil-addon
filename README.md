@@ -71,13 +71,16 @@ Influence amount is remembered for next use (You can shift+click on the button t
 ## Import textured brush pack
 
 Download and append online [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
-This is available in the sidebar > Tool > Brushes panel int the brush dropdown menu (where you can reset brush)
-
+This is available in the sidebar > Tool > Brushes panel int the brush dropdown menu (where you can reset brush)  
+/!\ this will be removed once blender official asset manager will be active
 
 ---
 
 ## Changelog
 
+1.0.3 0 2020-09-20:
+
+- fix: redownload brush pack when using operator to get update (but dl url is in a container and change at every upload)...
 
 1.0.2 - 2020-09-15:
 
