@@ -78,7 +78,12 @@ This is available in the sidebar > Tool > Brushes panel int the brush dropdown m
 
 ## Changelog
 
-1.0.3 0 2020-09-20:
+1.1.0 - 2020-09-27:
+
+- brush pack included in addon
+- change tab UI name (category) in sidebar in addon prefs. 
+
+1.0.3 - 2020-09-20:
 
 - fix: redownload brush pack when using operator to get update (but dl url is in a container and change at every upload)...
 
