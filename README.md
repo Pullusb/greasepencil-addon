@@ -63,15 +63,15 @@ Shortcut changed are refreshed upon modifications.
 
 ## Straight stroke
 
-Straighten the stroke between first ans last point, keeping the points proportionally.  
-You can affect influence in the redo panel.  
-Influence amount is remembered for next use (You can shift+click on the button to reset to 100% influence)
+Straighten the stroke between first ans last point, keeping the points proportionally distant from each other.  
+You can affect influence in the redo panel (press F9 to pop up the redo panel).  
+Influence amount is remembered for next use (You can shift+click on the button to reset and force the use of 100% influence)
 
 
 ## Import textured brush pack
 
-Download and append online [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
-This is available in the sidebar > Tool > Brushes panel int the brush dropdown menu (where you can reset brush)  
+Install included [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
+This is available in the sidebar > Tool > Brushes panel in the brush dropdown menu (where you can reset brush)  
 /!\ this will be removed once blender official asset manager will be active
 
 ---
