@@ -78,6 +78,11 @@ This is available in the sidebar > Tool > Brushes panel int the brush dropdown m
 
 ## Changelog
 
+1.1.1 - 2020-09-28:
+
+- fix: incomplete brush install
+- change : default rotate canvas is now on `ctrl+alt+MMB`
+
 1.1.0 - 2020-09-27:
 
 - brush pack included in addon
