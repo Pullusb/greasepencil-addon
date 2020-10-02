@@ -2,7 +2,7 @@
 
 Blender addon - Pack of tools for grease pencil drawing.
 
-### Note : this addon is bundled in blender starting at version 2.91 
+### Note : this addon is bundled in blender (starting at version 2.91) 
 
 ## [Download latest](https://github.com/Pullusb/greasepencil-addon/archive/master.zip)
 
