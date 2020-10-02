@@ -294,7 +294,7 @@ class GP_OT_latticeGpDeform(bpy.types.Operator):
     def modal(self, context, event):
         display_text = f"Deform Cage size: {self.lat.points_u}x{self.lat.points_v} (1-9 or ctrl + ←→↑↓)  | \
 mode (M) : {'Linear' if self.lat.interpolation_type_u == 'KEY_LINEAR' else 'Spline'} | \
-valid:Spacebar/Enter/Tab, cancel:Del/Backspace/Ctrl+T"
+valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         context.area.header_text_set(display_text)
 
 

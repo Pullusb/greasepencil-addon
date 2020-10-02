@@ -1,17 +1,5 @@
 from .prefs import get_addon_prefs
 
-bl_info = {
-    "name": "Rotate Canvas",
-    "description": "Rotate camera if in cam view, view if in free navigation",
-    "author": "Samuel Bernou, Christophe Seux",
-    "version": (1, 0, 3),
-    "blender": (2, 83, 0),
-    "location": "Shortcut ctrl + alt + right-mouse-click",
-    "warning": "",
-    "doc_url": "https://github.com/Pullusb/rotate_canvas",
-    "category": "3D View"
-}
-
 import bpy
 import math
 import mathutils

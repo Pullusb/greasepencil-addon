@@ -2,6 +2,8 @@
 
 Blender addon - Pack of tools for grease pencil drawing.
 
+### Note : this addon is bundled in blender starting at version 2.91 
+
 ## [Download latest](https://github.com/Pullusb/greasepencil-addon/archive/master.zip)
 
 <!-- Want to support me? [Check this page](http://www.samuelbernou.fr/donate) -->
@@ -77,6 +79,14 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 ---
 
 ## Changelog
+
+1.1.2 - 2020-10-02:
+
+- Addon is now in blender Master official !
+- added grease pencil team names  
+- fix: Typo in text displayed boxdeform modal
+- UI: added box layout
+
 
 1.1.1 - 2020-09-28:
 

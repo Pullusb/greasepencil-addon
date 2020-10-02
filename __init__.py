@@ -20,15 +20,15 @@
 bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Pack of tools for Grease pencil drawing",
-"author": "Samuel Bernou",
-"version": (1, 1, 1),
-"blender": (2, 83, 0),
-"location": "sidebar (N) > Grease pencil > Grease pencil",
+"author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
+"version": (1, 1, 2),
+"blender": (2, 91, 0),
+"location": "Sidebar > Grease pencil > Grease pencil",
 "warning": "",
-"doc_url": "https://github.com/Pullusb/greasepencil-addon",
+"doc_url": "https://docs.blender.org/manual/en/dev/addons/object/grease_pencil_tools.html",
 "tracker_url": "https://github.com/Pullusb/greasepencil-addon/issues",
 "category": "Object",
-# "support": "COMMUNITY",
+"support": "OFFICIAL",
 }
 
 import bpy
@@ -48,7 +48,7 @@ def register():
     import_brush_pack.register()
     ui_panels.register()
 
-    ## update panel name with update in pref file (passing addon_prefs)
+    ## update tab name with update in pref file (passing addon_prefs)
     prefs.update_panel(prefs.get_addon_prefs(), bpy.context)
 
 def unregister():
