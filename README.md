@@ -1,8 +1,8 @@
 # Grease pencil tools
 
-Blender addon - Pack of tools for grease pencil drawing.
+Blender addon - Extra tools for Grease Pencil.
 
-### Note : this addon is bundled in blender (starting at version 2.91) 
+# Note : This addon is now bundled in Blender (starting at 2.91).
 
 ## [Download latest](https://github.com/Pullusb/greasepencil-addon/archive/master.zip)
 
@@ -79,6 +79,11 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 ---
 
 ## Changelog
+
+1.1.3 - 2020-10-06:
+
+- Spellcheck: Capitalize words in displayed text
+
 
 1.1.2 - 2020-10-02:
 
