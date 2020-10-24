@@ -80,6 +80,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.1.4 - 2020-10-24:
+
+- change brush pack installation to a gitlab web download
+
 1.1.3 - 2020-10-06:
 
 - Spellcheck: Capitalize words in displayed text

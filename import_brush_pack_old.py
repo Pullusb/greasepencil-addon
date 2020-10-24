@@ -2,6 +2,7 @@ import bpy
 import re
 import ssl
 import urllib.request
+import urllib.parse
 
 def unzip(zip_path, extract_dir_path):
     '''Get a zip path and a directory path to extract to'''
@@ -54,7 +55,7 @@ def get_brushes(blend_fp):
 class GP_OT_install_brush_pack(bpy.types.Operator):
     bl_idname = "gp.import_brush_pack"
     bl_label = "Download and import texture brush pack"
-    bl_description = "Download and import Grease Pencil brush pack from blender cloud"
+    bl_description = "Download and import Grease Pencil brush pack from the web (~3.7 Mo)"
     bl_options = {"REGISTER", "INTERNAL"}
 
     # @classmethod
@@ -63,15 +64,9 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
 
     def execute(self, context):
 
-        ## Compare current loaded brush with a hardcoded list of brush (not that usefull)
-        # all_brushes = [b.name for b in bpy.data.brushes]
-        # brushlist = ['pp_cloud_1', 'pp_grass_1', 'pp_grass_2', 'pp_leafs_1', 'pp_leafs_2', 'pp_oil_1', 'pp_oil_2', 'pp_rough_1', 'pp_sktch_1', 'pp_sktch_2', 'pp_sktch_3', 'pp_spray_1', 'pp_spray_2', 'pp_stone_1', 'pp_wet_1']
-        # if all([name in all_brushes for name in brushlist]):
-        #     self.report({'WARNING'}, 'Brushes already loaded')
-        #     return {"CANCELLED"}
-
         from pathlib import Path
         import tempfile
+        import json
         
         """ ## try to get DL link from page... seem encapsulated in a 'project container':
         page_url = 'https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b'
@@ -95,9 +90,10 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
 
         ## update dl_url string from match
         dl_url = matches[0]
+
         """
 
-        ## URL seem to change everytime link is updated !
+        ## blender cloud URL seem to change everytime link is updated !
         dl_url = 'https://storage.googleapis.com/5649de716dcaf85da2faee95/_%2F1fc0d9422d724dd680f3240b07fb8017.zip?GoogleAccessId=956532172770-27ie9eb8e4u326l89p7b113gcb04cdgd%40developer.gserviceaccount.com&Expires=1600636870&Signature=I9XJeh9rjlLv2c76WUlWbgtO4v%2BkNj3TrRNlyB6sKIicpxDHyuy9wef0fwESf6Szl8YAiK6nq739RpgkR8IYolRHq5YkobI3MNFr52daC1m9B4Jem%2FXIcyvPWUGuh%2BD3u5OFkV6xcecb%2F3T3YXlzhGt%2FQFeuLWKv6S2lFOudfv5Vhii4aN6k0mT2%2BlUt2bRc5AbkzxIwNhg7%2FHO9%2FyDkHCdncQ7CZi874BMlC2hoF30PQSCEk9dtuZ0vafR90xt4lZ2G1fKk%2Fj0C2CH8Bxjl2M%2FBjhr26yMvccILUMmekMsq%2F%2BYA6fVfz8LxfA74sRmznHzi7QZLjjC0wuOW7ZPKbA%3D%3D'
         blendname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.blend'
         zipname = 'Daniel Martinez Lara (pepeland)_brush_pack_V2.zip'
@@ -108,11 +104,11 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
             return {"CANCELLED"}
         
         temp = Path(temp)
-        
         brushzip = temp / zipname
         blend_fp = Path(temp) / blendname
         
-        '''### Part to load existing files instead of redownloading
+        '''
+        ### Part to load existing files instead of redownloading (problem : can't et update with this...)
         ## use blend if exists in tempdir
         if blend_fp.exists():
             bct = get_brushes(blend_fp)
