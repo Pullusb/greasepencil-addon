@@ -80,6 +80,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.1.5 - 2020-10-25:
+
+- fix: Error when querying url from linux (need ssl context)
+
 1.1.4 - 2020-10-24:
 
 - change brush pack installation to a gitlab web download

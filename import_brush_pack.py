@@ -109,6 +109,9 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         repo_url = r'https://gitlab.com/api/v4/projects/21994857' 
         tree_url = f'{repo_url}/repository/tree'
 
+        ## need to create an SSl context or linux fail and raise unverified ssl
+        ssl._create_default_https_context = ssl._create_unverified_context
+
         try:
             with urllib.request.urlopen(tree_url) as response:
                 html = response.read()
@@ -174,8 +177,11 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         ## Download, unzip, use blend
         print(f'Downloading brushpack in {self.brushzip}')
         ## https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b
-        err = simple_dl_url(dl_url, str(self.brushzip), 
-            fallback_url='https://gitlab.com/pepe-school-land/gp-brush-pack/-/blob/master/Official_GP_brush_pack_v01.zip')
+
+        fallback_url='https://gitlab.com/pepe-school-land/gp-brush-pack/-/blob/master/Official_GP_brush_pack_v01.zip'
+        err = simple_dl_url(dl_url, str(self.brushzip), fallback_url)
+        # err = download_url(dl_url, str(self.brushzip), fallback_url) 
+
         if err:
             self.report({'ERROR'}, 'Could not download brush pack. Check your internet connection. (see console for detail)')
             return {"CANCELLED"}
