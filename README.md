@@ -80,6 +80,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.1.6 - 2021-01-24:
+
+- fix: correct keymap register
+
 1.1.5 - 2020-10-25:
 
 - fix: Error when querying url from linux (need ssl context)
