@@ -14,7 +14,7 @@ Add option in Tab Grease Pencil
 
 ## Box deform on `Ctrl+T`
 
-Exemple with lattice subdiv and spline deformations.
+Example with lattice subdiv and spline deformations.
 
 ![box demo](https://github.com/Pullusb/images_repo/raw/master/box_deform_demo.gif)
 
