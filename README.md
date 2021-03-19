@@ -62,6 +62,25 @@ Shortcut changed are refreshed upon modifications.
 
 **Reset view** (free navigation only): Click and release immediately without rotation to reset (up view point to world Z).
 
+**Incremental rotate** Use `Shift` to increment rotation by a user-defined degree (in addon pref)
+
+**Save/restore camera rotation** use button in sidebar
+
+
+## Viewport timeline scrubbing
+
+Use `Alt + Mid-Clic` to call viewport timeline (customisable in addon prefs)
+
+Use `Ctrl` to snap on keys
+
+Options:
+
+`Always snap` option snap on the keys
+
+`Rolling mode` Discard timing information to jump quickly between keys
+
+You have a lot more option to customise the Graphical aspect of the timeline.
+
 
 ## Straight stroke
 
@@ -79,6 +98,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 ---
 
 ## Changelog
+
+1.4.0 - 2021-03-19
+
+- Match updates from official 1.4.0 bundled in blender (2.93)
 
 1.1.6 - 2021-01-24:
 
