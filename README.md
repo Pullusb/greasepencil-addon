@@ -99,6 +99,11 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.4.2 - 2021-03-30
+
+- Enable Box deform with multi-lattice if blender version >= 2.93
+- Fix error when trying to use snap with the OSD timeline deactivated
+
 1.4.0 - 2021-03-19
 
 - Match updates from official 1.4.0 bundled in blender (2.93)
