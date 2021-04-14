@@ -99,6 +99,11 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+
+1.4.3 - 2021-04-14
+
+- fix: box deform working on grease pencil object with multiple instances
+
 1.4.2 - 2021-03-30
 
 - Enable Box deform with multi-lattice if blender version >= 2.93
