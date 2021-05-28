@@ -100,6 +100,13 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 ## Changelog
 
 
+1.5.0 - 2021-05-28
+
+- feat: New rotate canvas pivot mode in camera view (enabled by default).
+rotate by view center pivot instead of camera center.
+- fix: Rotate canvas precision (wasn't rotating exactly from area center)
+Now compatible with region overlap toggled off
+
 1.4.3 - 2021-04-14
 
 - fix: box deform working on grease pencil object with multiple instances
