@@ -110,7 +110,7 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 1.5.1 - 2021-07-11
 
-- feat: boxdeform keep latice on confirm (use `shift` + confirm buttons), renamed with a unique ID
+- feat: boxdeform keep lattice on confirm (use `shift` + confirm buttons)
 
 1.5.0 - 2021-05-28
 
