@@ -31,6 +31,21 @@ def region_to_location(viewcoords, depthcoords):
     from bpy_extras import view3d_utils
     return view3d_utils.region_2d_to_location_3d(bpy.context.region, bpy.context.space_data.region_3d, viewcoords, depthcoords)
 
+def store_cage(obj, cage, vg_name):
+    import time
+    unique_id = time.strftime(r'%y%m%d%H%M%S') # ex: 20210711111117
+    # name = f'gp_lattice_{unique_id}'
+    name = f'{obj.name}_lat{unique_id}'
+    vg = obj.vertex_groups.get(vg_name)
+    if vg:
+        vg.name = name
+    cage.name = name
+    cage.data.name = name
+    mod = obj.grease_pencil_modifiers.get('tmp_lattice')
+    if mod:
+        mod.name = name #f'Lattice_{unique_id}'
+        mod.vertex_group = name
+
 def assign_vg(obj, vg_name, delete=False):
     ## create vertex group
     vg = obj.vertex_groups.get(vg_name)
@@ -413,8 +428,12 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 context.window_manager.boxdeform_running = False
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
-                apply_cage(self.gp_obj, self.cage)#must be in object mode
-                assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
+                if event.shift:
+                    # Let the cage as is with a unique ID
+                    store_cage(self.gp_obj, self.cage, 'lattice_cage_deform_group')
+                else:
+                    apply_cage(self.gp_obj, self.cage)#must be in object mode
+                    assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
 
                 # back to original mode
                 if self.gp_mode != 'OBJECT':

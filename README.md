@@ -2,7 +2,12 @@
 
 Blender addon - Extra tools for Grease Pencil.
 
-# Note : This addon is now bundled in Blender (starting at 2.91).
+# Note : This addon is bundled directly in Blender (starting at 2.91).
+
+**This repository is the developpement version (Usually stable)**
+
+You can install this version side by side with the official one (check version number for the most recent).  
+Just activate only one of the two otherwise you'll get an error
 
 ## [Download latest](https://github.com/Pullusb/greasepencil-addon/archive/master.zip)
 
@@ -34,7 +39,7 @@ Then use following shortcuts (also displayed in topbar):
 
 **Shortcuts** (also displayed in topbar):
 
-- `Spacebar` / `Enter` : **Confirm**  
+- `Spacebar` / `Enter` : **Confirm**  (Combine with `Shift` to let the lattice in place)  
 - `Delete` / `Backspace` / `ctrl+T` / `Tab`(twice) : **Cancel**  
 - `M` : **Toggle Linear and Spline** mode at any moment  
 - `1-9 top row number` : Shortcut to **subdivide box**  
@@ -93,12 +98,16 @@ Influence amount is remembered for next use (You can shift+click on the button t
 
 Install included [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
 This is available in the sidebar > Tool > Brushes panel in the brush dropdown menu (where you can reset brush)  
-/!\ this will be removed once blender official asset manager will be active
+/!\ This will be removed once blender official asset manager will be active
 
 ---
 
 ## Changelog
 
+
+1.5.1 - 2021-07-11
+
+- feat: boxdeform keep latice on confirm (use `shift` + confirm buttons), renamed with a unique ID
 
 1.5.0 - 2021-05-28
 
