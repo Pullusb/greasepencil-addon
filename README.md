@@ -104,6 +104,9 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.5.2 - 2021-07-11
+
+- feat: boxdeform not limited to active object in object mode. Affect all selected grease pencils objects.
 
 1.5.1 - 2021-07-11
 
