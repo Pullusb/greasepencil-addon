@@ -104,6 +104,11 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.5.3 - 2021-08-29
+
+- feat: added a checkbox to disable *tiemline-scrub*
+- fix: added `numpad_enter` to valid *box_deform* transform
+
 1.5.2 - 2021-07-11
 
 - feat: boxdeform not limited to active object in object mode. Affect all selected grease pencils objects.

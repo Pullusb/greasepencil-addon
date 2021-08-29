@@ -555,6 +555,12 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Alternative Gap-less timeline. No time informations to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
         default=False)
 
+    use: BoolProperty(
+        name="Enable",
+        description="Enable/Disable timeline scrub",
+        default=True,
+        update=auto_rebind)
+
     use_in_timeline_editor: BoolProperty(
         name="Shortcut in timeline editors",
         description="Add the same shortcut to scrub in timeline editor windows",
@@ -681,6 +687,9 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
 def draw_ts_pref(prefs, layout):
     # - General settings
     layout.label(text='Timeline Scrub:')
+    layout.prop(prefs, 'use')
+    if not prefs.use:
+        return
     layout.prop(prefs, 'evaluate_gp_obj_key')
     layout.prop(prefs, 'pixel_step')
 
@@ -769,6 +778,9 @@ addon_keymaps = []
 
 def register_keymaps():
     prefs = get_addon_prefs().ts
+    if not prefs.use:
+        return
+
     addon = bpy.context.window_manager.keyconfigs.addon
     km = addon.keymaps.new(name="Grease Pencil",
                            space_type="EMPTY", region_type='WINDOW')

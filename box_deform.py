@@ -458,7 +458,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             return {"RUNNING_MODAL"}
 
         # Valid
-        if event.type in {'RET', 'SPACE'}:
+        if event.type in {'RET', 'SPACE', 'NUMPAD_ENTER'}:
             if event.value == 'PRESS':
                 context.window_manager.boxdeform_running = False
                 self.restore_prefs(context)
