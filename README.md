@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.5.4 - 2022-01-26
+
+- fix: keep viewpoint when reseting rotation within camera 
+
 1.5.3 - 2021-08-29
 
 - feat: added a checkbox to disable *tiemline-scrub*
