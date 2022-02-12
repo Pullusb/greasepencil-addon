@@ -21,7 +21,7 @@ bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Extra tools for Grease Pencil",
 "author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
-"version": (1, 5, 4),
+"version": (1, 5, 5),
 "blender": (2, 91, 0),
 "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
 "warning": "",
@@ -42,6 +42,8 @@ from .  import (prefs,
                 )
 
 def register():
+    if bpy.app.background:
+        return
     prefs.register()
     timeline_scrub.register()
     box_deform.register()
@@ -54,6 +56,8 @@ def register():
     prefs.update_panel(prefs.get_addon_prefs(), bpy.context)
 
 def unregister():
+    if bpy.app.background:
+        return
     ui_panels.unregister()
     import_brush_pack.unregister()
     rotate_canvas.unregister()

@@ -104,6 +104,11 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.5.5 - 2022-02-12
+
+- changed: brush pack download url to point to `blender.org`
+- fix: Disable registers in background mode, avoid keymap error
+
 1.5.4 - 2022-01-26
 
 - fix: keep viewpoint when reseting rotation within camera 
