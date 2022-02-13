@@ -4,7 +4,7 @@ Blender addon - Extra tools for Grease Pencil.
 
 # Note : This addon is bundled directly in Blender (starting at 2.91).
 
-**This repository is the developpement version (Usually stable)**
+**This repository is the development version (Usually stable)**
 
 You can install this version side by side with the official one (check version number for the most recent).  
 Just activate only one of the two otherwise you'll get an error
@@ -19,7 +19,7 @@ Add option in Tab Grease Pencil
 
 ## Box deform on `Ctrl+T`
 
-Exemple with lattice subdiv and spline deformations.
+Example with lattice subdiv and spline deformations.
 
 ![box demo](https://github.com/Pullusb/images_repo/raw/master/box_deform_demo.gif)
 
@@ -89,7 +89,7 @@ You have a lot more option to customise the Graphical aspect of the timeline.
 
 ## Straight stroke
 
-Straighten the stroke between first ans last point, keeping the points proportionally distant from each other.  
+Straighten the stroke between first and last point, keeping the points proportionally distant from each other.  
 You can affect influence in the redo panel (press F9 to pop up the redo panel).  
 Influence amount is remembered for next use (You can shift+click on the button to reset and force the use of 100% influence)
 
@@ -111,7 +111,7 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 1.5.4 - 2022-01-26
 
-- fix: keep viewpoint when reseting rotation within camera 
+- fix: keep viewpoint when resetting rotation within camera 
 
 1.5.3 - 2021-08-29
 
