@@ -66,7 +66,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     # --- props
     use_clic_drag : BoolProperty(
         name='Use click drag directly on points',
-        description="Change the active tool to 'tweak' during modal, Allow to direct clic-drag points of the box",
+        description="Change the active tool to 'tweak' during modal, Allow to direct click-drag points of the box",
         default=True)
 
     default_deform_type : EnumProperty(
