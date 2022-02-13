@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import bpy
 import ssl
 import urllib.request
@@ -83,7 +85,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         self.temp = Path(temp)
 
         dl_url = 'http://download.blender.org/demo/bundles/bundles-3.0/grease-pencil-brush-pack.zip'
-        
+
         ## need to create an SSl context or linux fail and raise unverified ssl
         ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -112,7 +114,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
 
         ### Load existing files instead of redownloading if exists and up to date (same hash)
         if self.brushzip.exists():
-            
+
             ### compare using file size with size from url header
             disk_size = self.brushzip.stat().st_size
             if disk_size == file_size:

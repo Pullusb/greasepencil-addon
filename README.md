@@ -13,13 +13,13 @@ Just activate only one of the two otherwise you'll get an error
 
 <!-- Want to support me? [Check this page](http://www.samuelbernou.fr/donate) -->
 
----  
+---
 
 Add option in Tab Grease Pencil
 
 ## Box deform on `Ctrl+T`
 
-Exemple with lattice subdiv and spline deformations.
+Example with lattice subdiv and spline deformations.
 
 ![box demo](https://github.com/Pullusb/images_repo/raw/master/box_deform_demo.gif)
 
@@ -104,14 +104,15 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
-1.5.5 - 2022-02-12
+1.5.5 - 2022-02-13
 
 - changed: brush pack download url to point to `blender.org`
 - fix: Disable registers in background mode, avoid keymap error
+- changed: follow new blender license convention
 
 1.5.4 - 2022-01-26
 
-- fix: keep viewpoint when reseting rotation within camera 
+- fix: keep viewpoint when reseting rotation within camera
 
 1.5.3 - 2021-08-29
 
@@ -166,7 +167,7 @@ Now compatible with region overlap toggled off
 1.1.2 - 2020-10-02:
 
 - Addon is now in blender Master official !
-- added grease pencil team names  
+- added grease pencil team names
 - fix: Typo in text displayed boxdeform modal
 - UI: added box layout
 
@@ -179,7 +180,7 @@ Now compatible with region overlap toggled off
 1.1.0 - 2020-09-27:
 
 - brush pack included in addon
-- change tab UI name (category) in sidebar in addon prefs. 
+- change tab UI name (category) in sidebar in addon prefs.
 
 1.0.3 - 2020-09-20:
 

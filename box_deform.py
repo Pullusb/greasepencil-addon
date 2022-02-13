@@ -1,20 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 '''Based on Box_deform standalone addon - Author: Samuel Bernou'''
 
@@ -333,7 +317,7 @@ def cancel_cage(self):
         self.gp_obj.grease_pencil_modifiers.remove(mod)
     else:
         print(f'tmp_lattice modifier not found to remove on {self.gp_obj.name}')
-    
+
     for ob in self.other_gp:
         mod = ob.grease_pencil_modifiers.get('tmp_lattice')
         if mod:
@@ -586,7 +570,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             ## silent return
             return {'CANCELLED'}
 
-            
+
         # bpy.ops.ed.undo_push(message="Box deform step")#don't work as expected (+ might be obsolete)
         # https://developer.blender.org/D6147 <- undo forget
 

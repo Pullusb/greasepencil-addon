@@ -1,20 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 '''Based on viewport_timeline_scrub standalone addon - Samuel Bernou'''
 
@@ -211,7 +195,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             else:
                 self.init_index = 0
                 self.init_frame = self.new_frame = self.pos[0]
-                
+
             # del active_pos
             self.index_limit = len(self.pos) - 1
 
@@ -311,14 +295,14 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
         self.batch_timeline = batch_for_shader(
             shader, 'LINES', {"pos": self.hud_lines})
-        
+
         if self.rolling_mode:
             current_id = self.pos.index(self.new_frame)
             # Add init_frame to "cancel" it in later UI code
             ui_key_pos = [i - current_id + self.init_frame for i, _f in enumerate(self.pos[:-2])]
         else:
             ui_key_pos = self.pos[:-2]
-        
+
 
         # keyframe display
         if self.keyframe_aspect == 'LINE':
@@ -345,7 +329,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             for i in ui_key_pos:
                 center = self.init_mouse_x + ((i-self.init_frame)*self.px_step)
                 if self.keyframe_aspect == 'DIAMOND':
-                    # +1 on x is to correct pixel alignement
+                    # +1 on x is to correct pixel alignment
                     shaped_key += [(center-keysize, my+upper),
                                    (center+1, my+keysize+upper),
                                    (center+keysize, my+upper),
@@ -552,7 +536,7 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
 
     rolling_mode: BoolProperty(
         name="Rolling Mode",
-        description="Alternative Gap-less timeline. No time informations to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
+        description="Alternative Gap-less timeline. No time information to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
         default=False)
 
     use: BoolProperty(
@@ -725,7 +709,7 @@ def draw_ts_pref(prefs, layout):
         snap_text = 'Disable keyframes snap: '
     else:
         snap_text = 'Keyframes snap: '
-    
+
     snap_text += 'Left Mouse' if prefs.keycode == 'RIGHTMOUSE' else 'Right Mouse'
     if not prefs.use_ctrl:
         snap_text += ' or Ctrl'
@@ -733,7 +717,7 @@ def draw_ts_pref(prefs, layout):
         snap_text += ' or Shift'
     if not prefs.use_alt:
         snap_text += ' or Alt'
-    
+
     if prefs.rolling_mode:
         snap_text = 'Gap-less mode (always snap)'
 
