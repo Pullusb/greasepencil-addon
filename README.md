@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.5.6 - 2022-02-14
+
+- changed: brush bundle url to https
+
 1.5.5 - 2022-02-13
 
 - changed: brush pack download url to point to `blender.org`
