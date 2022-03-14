@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.6.0 - 2022-03-14
+
+- added: Camera mirror flip operator
+
 1.5.7 - 2022-03-14
 
 - fix: Error using timeline scrub snap in blender 3+ (api change)
