@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.6.1 - 2022-04-28
+
+- fixed: operator poll
+
 1.6.0 - 2022-03-14
 
 - added: Camera mirror flip operator

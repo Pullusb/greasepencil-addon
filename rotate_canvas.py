@@ -284,7 +284,8 @@ class RC_OT_Set_rotation(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.region_3d.view_perspective == 'CAMERA'
+        return context.area.type == 'VIEW_3D' \
+            and context.space_data.region_3d.view_perspective == 'CAMERA'
 
     def execute(self, context):
         cam_ob = context.scene.camera
@@ -307,7 +308,9 @@ class RC_OT_Reset_rotation(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.region_3d.view_perspective == 'CAMERA' and context.scene.camera.get('stored_rotation')
+        return context.area.type == 'VIEW_3D' \
+            and context.space_data.region_3d.view_perspective == 'CAMERA' \
+            and context.scene.camera.get('stored_rotation')
 
     def execute(self, context):
         cam_ob = context.scene.camera
