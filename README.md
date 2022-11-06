@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.7.0 - 2022-11-06
+
+- added: layer navigation popup on `Y` shortcut
+
 1.6.2 - 2022-10-01
 
 - fixed: Error when no keyframes to draw (`gpu_extras.batch.batch_for_shader` does not accept empty lists in 3.4)
