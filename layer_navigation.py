@@ -4,6 +4,16 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
 from time import time
 
+from bpy.props import (BoolProperty,
+                       StringProperty,
+                       IntProperty,
+                       FloatVectorProperty,
+                       IntProperty,
+                       PointerProperty,
+                       EnumProperty)
+
+from .prefs import get_addon_prefs
+
 lock_on = [
     Vector((18, 10)), Vector((2, 10)),
     Vector((2, 10)), Vector((2, 2)),
@@ -255,9 +265,9 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     text = ''
     color = ''
     ct = 0
-    px_w = 260
-    px_h = 90
-    text_size = 18
+    # px_w = 260
+    # px_h = 90
+    # text_size = 18
     left_handed = False
 
     icons_margin_a = 30
@@ -286,6 +296,12 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     texts=[]
 
     def invoke(self, context, event):
+        prefs = get_addon_prefs().nav
+        self.px_h = prefs.box_height
+        self.px_w = prefs.box_width
+        self.text_size = prefs.text_size
+        self.left_handed = prefs.left_handed
+
         # if not context.area.type == 'VIEW_3D':
         #     self.report({'WARNING'}, "View3D not found, cannot run operator")
         #     return {'CANCELLED'}
@@ -696,9 +712,73 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         context.area.tag_redraw()
 
 
+class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
+
+    # sizes
+    box_height: IntProperty(
+        name="Layer Box Height",
+        description="Individual layer box height.\
+            \na big size take more screen space but allow better targeting",
+        default=80,
+        min=30,
+        max=200,
+        soft_min=60,
+        soft_max=130,
+        step=1,
+        subtype='PIXEL')
+
+    box_width: IntProperty(
+        name="Layer Box Width",
+        description="Individual layer box width.\
+            \na big size take more screen space but allow better targeting",
+        default=250,
+        min=120,
+        max=500,
+        soft_min=150,
+        soft_max=350,
+        step=1,
+        subtype='PIXEL')
+    
+    text_size: IntProperty(
+        name="Label Size",
+        description="Layer name label size",
+        default=16,
+        min=4,
+        max=40,
+        soft_min=8,
+        soft_max=20,
+        step=1,
+        subtype='PIXEL')
+    
+    left_handed: BoolProperty(
+        name='Left Handed',
+        description="Pop-up appear offseted at the right of the mouse pointer\
+            \nto avoif hand occluding layer label",
+        default=False)
+
+
+
+def draw_nav_pref(prefs, layout):
+    # - General settings
+    layout.label(text='Layer Navigation:')
+    # layout.prop(prefs, 'use')
+    # if not prefs.use:
+    #     return
+    col = layout.column()
+    row = col.row()
+    row.prop(prefs, 'box_height')
+    row.prop(prefs, 'box_width')
+    
+    row = col.row()
+    row.prop(prefs, 'text_size')
+    row.prop(prefs, 'left_handed')
+
+    # -/ Keymap -
+
+
 addon_keymaps = []
 
-def register_keymap():
+def register_keymaps():
     addon = bpy.context.window_manager.keyconfigs.addon
 
     for name in [
@@ -712,24 +792,22 @@ def register_keymap():
         kmi = km.keymap_items.new('gpencil.viewport_layer_nav_osd', type='Y', value='PRESS')
         addon_keymaps.append((km, kmi))
 
-
-def unregister_keymap():
+def unregister_keymaps():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     
     addon_keymaps.clear()
 
+classes = (
+    GPT_OT_viewport_layer_nav_osd,
+)
+
 def register():
-    bpy.utils.register_class(GPT_OT_viewport_layer_nav_osd)
-    register_keymap()
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    register_keymaps()
 
 def unregister():
-    unregister_keymap()
-    bpy.utils.unregister_class(GPT_OT_viewport_layer_nav_osd)
-
-
-if __name__ == "__main__":
-    register()
-
-    # test call
-    #bpy.ops.wm.modal_timer_operator()
+    unregister_keymaps()
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

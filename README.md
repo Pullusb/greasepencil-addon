@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.7.1 - 2022-11-08
+
+- added: initial set of preferences for layer navigation
+
 1.7.0 - 2022-11-06
 
 - added: layer navigation popup on `Y` shortcut

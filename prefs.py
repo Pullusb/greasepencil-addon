@@ -20,6 +20,7 @@ def get_addon_prefs():
     return (addon_prefs)
 
 from .timeline_scrub import GPTS_timeline_settings, draw_ts_pref
+from .layer_navigation import GPNAV_layer_navigation_settings, draw_nav_pref
 
 ## Addons Preferences Update Panel
 def update_panel(self, context):
@@ -40,6 +41,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     # bl_idname = __name__
 
     ts: PointerProperty(type=GPTS_timeline_settings)
+    nav: PointerProperty(type=GPNAV_layer_navigation_settings)
 
     category : StringProperty(
             name="Category",
@@ -192,6 +194,10 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             ## SCRUB TIMELINE
             box = layout.box()
             draw_ts_pref(prefs.ts, box)
+            
+            ## LAYER NAVIGATION
+            box = layout.box()
+            draw_nav_pref(prefs.nav, box)
 
 
 
@@ -260,6 +266,7 @@ def unregister_keymaps():
 
 classes = (
     GPTS_timeline_settings,
+    GPNAV_layer_navigation_settings,
     GPT_MT_box_deform_doc,
     GreasePencilAddonPrefs,
 )
