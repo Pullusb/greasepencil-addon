@@ -719,8 +719,8 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
         name="Layer Box Height",
         description="Individual layer box height.\
             \na big size take more screen space but allow better targeting",
-        default=80,
-        min=30,
+        default=30,
+        min=10,
         max=200,
         soft_min=60,
         soft_max=130,
@@ -742,7 +742,7 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
     text_size: IntProperty(
         name="Label Size",
         description="Layer name label size",
-        default=16,
+        default=12,
         min=4,
         max=40,
         soft_min=8,
