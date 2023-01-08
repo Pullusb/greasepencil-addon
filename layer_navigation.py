@@ -1,7 +1,7 @@
 import bpy
 import blf, bgl, gpu
 from gpu_extras.batch import batch_for_shader
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from time import time
 
 from bpy.props import (BoolProperty,
@@ -63,6 +63,55 @@ hide_on = [
     Vector((0, 8)), Vector((4, 4)),
     Vector((10, 2)), Vector((16, 4)),
 ]
+
+## Test gizmoGroup to draw native icons
+class GPT_GGT_layer_icons(bpy.types.GizmoGroup):
+    bl_label = "Layer Icons"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    bl_options = {'SCALE', 'PERSISTENT', 'SHOW_MODAL_ALL'} # , 'INTERNAL', 'PERSISTENT'
+
+    icon_size = 34 # currently more vertical gap size
+
+    @staticmethod
+    def set_gizmo_settings(gz, icon,
+            color=(0.0, 0.0, 0.0),
+            color_highlight=(0.5, 0.5, 0.5),
+            alpha=0.6,
+            alpha_highlight=0.6, # 0.1
+            show_drag=False,
+            draw_options={'BACKDROP', 'OUTLINE'},
+            scale_basis=24): # scale_basis default: 14
+        gz.icon = icon
+        # default 0.0
+        gz.color = color
+        # default 0.5
+        gz.color_highlight = color_highlight
+        gz.alpha = alpha
+        gz.alpha_highlight = alpha_highlight
+        gz.show_drag = show_drag
+        gz.draw_options = draw_options
+        gz.scale_basis = scale_basis
+        gz.use_draw_offset_scale = True
+
+    def setup(self, context):
+        ## Icon as Gizmo
+        self.gz = self.gizmos.new("GIZMO_GT_button_2d")
+        self.set_gizmo_settings(self.gz, 'LOCKED', draw_options=set())
+        ## Works without target (can be used just as icon)
+        # props = self.gz.target_set_operator("storytools.object_pan")
+
+    def draw_prepare(self, context):
+        region = context.region
+        # ui_scale = context.preferences.view.ui_scale
+
+        gz = self.gz
+        gz.use_draw_modal = True
+        gz.use_tooltip = False
+        gz.matrix_basis = Matrix.Translation((100, 100, 0))
+
+        ## On right border
+        # (2 * ui_scale + region.width - self.icon_size * ui_scale, region.height / 2 - self.icon_size, 0))
 
 def rectangle_tris_from_coords(quad_list):
     '''Get a list of Vector corner for a triangle
@@ -462,11 +511,17 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
         self.first = True
         self.store_settings(context)
+        
+        ## Instanciate Gizmo icon ?
+        # bpy.utils.register_class(GPT_GGT_layer_icons)
+
         self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
         # self._timer = wm.event_timer_add(0.1, window=context.window)
+
         wm.modal_handler_add(self)
         context.area.tag_redraw()
         return {'RUNNING_MODAL'}
+
 
     def set_fade(self, context):
         context.space_data.overlay.use_gpencil_fade_layers = True
@@ -709,6 +764,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         wm = context.window_manager
         # wm.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+        
+        ## remove Gyzmo Group icons
+        # del self.icon_gyzmos # remove the class
+        # bpy.utils.unregister_class(GPT_GGT_layer_icons)
+
         context.area.tag_redraw()
 
 
@@ -799,6 +859,7 @@ def unregister_keymaps():
     addon_keymaps.clear()
 
 classes = (
+    # GPT_GGT_layer_icons,
     GPT_OT_viewport_layer_nav_osd,
 )
 
