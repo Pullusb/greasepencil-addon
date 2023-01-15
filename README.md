@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.7.2 - 2023-01-15
+
+- changed: layer navigation has proper icons
+
 1.7.1 - 2022-11-08
 
 - added: initial set of preferences for layer navigation

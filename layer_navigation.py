@@ -3,6 +3,7 @@ import blf, gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 from time import time
+from pathlib import Path
 
 from bpy.props import (BoolProperty,
                        StringProperty,
@@ -181,32 +182,47 @@ def draw_callback_px(self, context):
     ## locked layer (individual rectangle)
     rects = []
     lock_rects = []
-    icons = []
     opacitys = []
     opacity_bars = []
     active_case = []
+    # icons = [] # lineicons
+    ## tex icon store
+    icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
+
     for i, l in enumerate(self.gpl):
         ## rect coords from bottom left corner
+
         corner = Vector((self.left, self.bottom + self.px_h * i))
         if i == self.ui_idx:
             active_case = [v + corner for v in self.case]
-        lock_coord = corner + Vector((self.px_w - 30, self.px_h - self.icons_margin_top))
-        hide_coord = corner + Vector((self.px_w - 70, self.px_h - self.icons_margin_top))
+
+        lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.px_h - self.icons_margin_top))
+
+        # Old width -70 (16 diff)
+        hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.px_h - self.icons_margin_top - 2)) # extra -2 to align better with lock
+        
         if l.lock:
             lock_rects += rectangle_tris_from_coords(
                 [v + corner for v in self.case]
             )
-            icons += [v + lock_coord for v in lock_on]
+            # icons += [v + lock_coord for v in lock_on] # lineicons
+            icons['locked'].append([v + lock_coord for v in self.icon_tex_coord])
         else:
             rects += rectangle_tris_from_coords(
                 [v + corner for v in self.case]
             )
-            icons += [v + lock_coord for v in lock_off]
+            # icons += [v + lock_coord for v in lock_off] # lineicons
+            icons['unlocked'].append([v + lock_coord for v in self.icon_tex_coord])
         
+        # if l.hide: # lineicons
+        #     icons += [v + hide_coord for v in hide_on] # lineicons
+        # else: # lineicons
+        #     icons += [v + hide_coord for v in hide_off] # lineicons
+
         if l.hide:
-            icons += [v + hide_coord for v in hide_on]
+            icons['hide_on'].append([v + hide_coord for v in self.icon_tex_coord])
         else:
-            icons += [v + hide_coord for v in hide_off]
+            icons['hide_off'].append([v + hide_coord for v in self.icon_tex_coord])
 
 
         ## opacity sliders background
@@ -254,8 +270,25 @@ def draw_callback_px(self, context):
     self.batch_lines.draw(shader)
 
     ## Lock/hide State icons
-    batch_icon = batch_for_shader(shader, 'LINES', {"pos": icons})
-    batch_icon.draw(shader)
+    # batch_icon = batch_for_shader(shader, 'LINES', {"pos": icons}) # lineicons
+    # batch_icon.draw(shader) # lineicons
+    
+    
+    ## Loop to draw tex icons
+    for icon_name, coord_list in icons.items():
+        texture = gpu.texture.from_image(self.icon_tex[icon_name])
+        for coords in coord_list:
+            shader_tex = gpu.shader.from_builtin('2D_IMAGE')
+            batch_icons = batch_for_shader(
+                shader_tex, 'TRI_FAN',
+                {
+                    "pos": coords,
+                    "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
+                },
+            )
+            shader_tex.bind()
+            shader_tex.uniform_sampler("image", texture)
+            batch_icons.draw(shader_tex)
 
     gpu.state.line_width_set(4.0)
     ## Highlight active layer
@@ -302,27 +335,6 @@ def draw_callback_px(self, context):
             blf.draw(font_id, self.drag_text)
 
 
-    ## TODO: convert everything bgl -> gpu 
-
-    ### --- Texture icons
-    # for image in self.icon_defined:
-    #     texture = gpu.texture.from_image(image)
-
-    #     shader = gpu.shader.from_builtin('2D_IMAGE')
-    #     batch = batch_for_shader(
-    #         shader, 'TRI_FAN',
-    #         {
-    #             "pos": ((0, 0), (32, 0), (32, 32), (0, 32)),
-    #             "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
-    #         },
-    #     )
-
-    #     shader.bind()
-    #     gpu.state.blend_set('ALPHA')
-    #     shader.uniform_sampler("image", texture)
-    #     batch.draw(shader)
-    #     gpu.state.blend_set('NONE')
-
 class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_idname = "gpencil.viewport_layer_nav_osd"
     bl_label = "GP Layer Navigator Pop up"
@@ -342,7 +354,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     left_handed = False
 
     icons_margin_a = 30
-    icons_margin_b = 70
+    icons_margin_b = 54
     icons_margin_top = 20
 
     use_fade = False
@@ -360,18 +372,34 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     active_layer_color = (0.28, 0.45, 0.7, 1.0) # Blue  (active color)
     empty_layer_color = (0.7, 0.5, 0.4, 1.0) # mid reddish grey # (0.5, 0.5, 0.5, 1.0) # mid grey
     hided_layer_color = (0.4, 0.4, 0.4, 1.0) # faded grey
+
+    icon_tex_coord = (Vector((0, 0)), Vector((20, 0)), Vector((20, 20)), Vector((0, 20)))
     
     add_box = 24
 
     # value = None
     texts=[]
 
+    def get_icon(self, img_name):
+        store_name = '.' + img_name
+        img = bpy.data.images.get(store_name)
+        if not img:
+            icon_folder = Path(__file__).parent / 'icons'
+            img = bpy.data.images.load(filepath=str((icon_folder / img_name).with_suffix('.png')), check_existing=False)
+            img.name = store_name
+        
+        return img
+
+
     def invoke(self, context, event):
         # Load texture icons
-        # for name in ['.locked','.unlocked', '.hide_off', '.hide_on']:
-        #     if name not in bpy.data.images:
-                
-
+        ## stored in a dict
+        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
+        # self.locked_icon = self.get_icon('locked')
+        # self.unlocked_icon = self.get_icon('unlocked')
+        # self.hide_off_icon = self.get_icon('hide_off')
+        # self.hide_on_icon = self.get_icon('hide_on')
+        
 
         prefs = get_addon_prefs().nav
         self.px_h = prefs.box_height
@@ -811,8 +839,8 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
         default=30,
         min=10,
         max=200,
-        soft_min=60,
-        soft_max=130,
+        soft_min=26,
+        soft_max=120,
         step=1,
         subtype='PIXEL')
 
