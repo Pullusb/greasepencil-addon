@@ -301,6 +301,28 @@ def draw_callback_px(self, context):
         else:
             blf.draw(font_id, self.drag_text)
 
+
+    ## TODO: convert everything bgl -> gpu 
+
+    ### --- Texture icons
+    # for image in self.icon_defined:
+    #     texture = gpu.texture.from_image(image)
+
+    #     shader = gpu.shader.from_builtin('2D_IMAGE')
+    #     batch = batch_for_shader(
+    #         shader, 'TRI_FAN',
+    #         {
+    #             "pos": ((0, 0), (32, 0), (32, 32), (0, 32)),
+    #             "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
+    #         },
+    #     )
+
+    #     shader.bind()
+    #     gpu.state.blend_set('ALPHA')
+    #     shader.uniform_sampler("image", texture)
+    #     batch.draw(shader)
+    #     gpu.state.blend_set('NONE')
+
 class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_idname = "gpencil.viewport_layer_nav_osd"
     bl_label = "GP Layer Navigator Pop up"
@@ -345,6 +367,12 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     texts=[]
 
     def invoke(self, context, event):
+        # Load texture icons
+        for name in ['.locked','.unlocked', '.hide_off', '.hide_on']:
+            if name not in bpy.data.images:
+                
+
+
         prefs = get_addon_prefs().nav
         self.px_h = prefs.box_height
         self.px_w = prefs.box_width
