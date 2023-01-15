@@ -1,5 +1,5 @@
 import bpy
-import blf, bgl, gpu
+import blf, gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 from time import time
@@ -169,8 +169,8 @@ def draw_callback_px(self, context):
     # blf.draw(font_id, "Time " + self.text)
 
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(1.0)
 
     shader.bind()
 
@@ -247,7 +247,7 @@ def draw_callback_px(self, context):
     batch_lock.draw(shader)
 
     ### --- Trace Lines
-    bgl.glLineWidth(2)
+    gpu.state.line_width_set(2.0)
     
     ## line color
     shader.uniform_float("color", self.lines_color) # (1.0, 1.0, 1.0, 1.0)
@@ -257,7 +257,7 @@ def draw_callback_px(self, context):
     batch_icon = batch_for_shader(shader, 'LINES', {"pos": icons})
     batch_icon.draw(shader)
 
-    bgl.glLineWidth(4)
+    gpu.state.line_width_set(4.0)
     ## Highlight active layer
     if active_case:
         shader.uniform_float("color", self.active_layer_color) # (1.0, 1.0, 1.0, 1.0)
@@ -265,8 +265,8 @@ def draw_callback_px(self, context):
         batch_active = batch_for_shader(shader, 'LINE_STRIP', {"pos": active_case})
         batch_active.draw(shader)
 
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.line_width_set(1.0)
+    gpu.state.blend_set('NONE')
 
 
     ### --- Texts
@@ -368,8 +368,8 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
     def invoke(self, context, event):
         # Load texture icons
-        for name in ['.locked','.unlocked', '.hide_off', '.hide_on']:
-            if name not in bpy.data.images:
+        # for name in ['.locked','.unlocked', '.hide_off', '.hide_on']:
+        #     if name not in bpy.data.images:
                 
 
 
@@ -498,6 +498,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             self.add_box_rects += rectangle_tris_from_coords(box)
 
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+        # shader = gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')
 
         self.case = [
             Vector((0, 0)),
