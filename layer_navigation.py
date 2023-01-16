@@ -15,56 +15,6 @@ from bpy.props import (BoolProperty,
 
 from .prefs import get_addon_prefs
 
-lock_on = [
-    Vector((18, 10)), Vector((2, 10)),
-    Vector((2, 10)), Vector((2, 2)),
-    Vector((2, 2)), Vector((18, 2)),
-    Vector((18, 2)), Vector((18, 10)),
-    Vector((6, 16)), Vector((4, 14)),
-    Vector((14, 16)), Vector((16, 14)),
-    Vector((6, 16)), Vector((14, 16)),
-    Vector((4, 14)), Vector((4, 10)),
-    Vector((16, 14)), Vector((16, 10)),
-]
-
-lock_off = [
-    Vector((18, 10)), Vector((2, 10)),
-    Vector((2, 10)), Vector((2, 2)),
-    Vector((2, 2)), Vector((18, 2)),
-    Vector((18, 2)), Vector((18, 10)),
-    Vector((2, 16)), Vector((4, 14)),
-    Vector((-6, 16)), Vector((-8, 14)),
-    Vector((2, 16)), Vector((-6, 16)),
-    Vector((4, 14)), Vector((4, 10)),
-    Vector((-8, 14)), Vector((-8, 10)),
-]
-
-hide_off = [
-    Vector((4, 4)), Vector((10, 2)),
-    Vector((4, 12)), Vector((0, 8)),
-    Vector((16, 12)), Vector((20, 8)),
-    Vector((16, 4)), Vector((20, 8)),
-    Vector((10, 4)), Vector((7, 5)),
-    Vector((13, 5)), Vector((10, 4)),
-    Vector((10, 12)), Vector((13, 11)),
-    Vector((10, 14)), Vector((4, 12)),
-    Vector((0, 8)), Vector((4, 4)),
-    Vector((10, 14)), Vector((16, 12)),
-    Vector((10, 2)), Vector((16, 4)),
-    Vector((7, 11)), Vector((10, 12)),
-    Vector((6, 8)), Vector((7, 11)),
-    Vector((7, 5)), Vector((6, 8)),
-    Vector((14, 8)), Vector((13, 5)),
-    Vector((13, 11)), Vector((14, 8)),
-]
-
-hide_on = [
-    Vector((4, 4)), Vector((10, 2)),
-    Vector((16, 4)), Vector((20, 8)),
-    Vector((0, 8)), Vector((4, 4)),
-    Vector((10, 2)), Vector((16, 4)),
-]
-
 
 def rectangle_tris_from_coords(quad_list):
     '''Get a list of Vector corner for a triangle
@@ -137,7 +87,6 @@ def draw_callback_px(self, context):
     opacitys = []
     opacity_bars = []
     active_case = []
-    # icons = [] # lineicons
     ## tex icon store
     icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
 
@@ -158,19 +107,13 @@ def draw_callback_px(self, context):
             lock_rects += rectangle_tris_from_coords(
                 [v + corner for v in self.case]
             )
-            # icons += [v + lock_coord for v in lock_on] # lineicons
             icons['locked'].append([v + lock_coord for v in self.icon_tex_coord])
         else:
             rects += rectangle_tris_from_coords(
                 [v + corner for v in self.case]
             )
-            # icons += [v + lock_coord for v in lock_off] # lineicons
             icons['unlocked'].append([v + lock_coord for v in self.icon_tex_coord])
 
-        # if l.hide: # lineicons
-        #     icons += [v + hide_coord for v in hide_on] # lineicons
-        # else: # lineicons
-        #     icons += [v + hide_coord for v in hide_off] # lineicons
 
         if l.hide:
             icons['hide_on'].append([v + hide_coord for v in self.icon_tex_coord])
@@ -222,10 +165,6 @@ def draw_callback_px(self, context):
     shader.uniform_float("color", self.lines_color) # (1.0, 1.0, 1.0, 1.0)
     self.batch_lines.draw(shader)
 
-    ## Lock/hide State icons
-    # batch_icon = batch_for_shader(shader, 'LINES', {"pos": icons}) # lineicons
-    # batch_icon.draw(shader) # lineicons
-
     ## Loop to draw tex icons
     for icon_name, coord_list in icons.items():
         texture = gpu.texture.from_image(self.icon_tex[icon_name])
@@ -242,8 +181,8 @@ def draw_callback_px(self, context):
             shader_tex.uniform_sampler("image", texture)
             batch_icons.draw(shader_tex)
 
-    gpu.state.line_width_set(4.0)
     ## Highlight active layer
+    gpu.state.line_width_set(4.0)
     if active_case:
         shader.uniform_float("color", self.active_layer_color) # (1.0, 1.0, 1.0, 1.0)
         active_case.append(active_case[0])
@@ -293,16 +232,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_description = "Change active GP layer with a viewport interactive OSD"
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    interval = 0.1
-    limit = 2.2
-    # fade_appear = 0.1
+    # interval = 0.1
+    # limit = 2.2
+
     lapse = 0
     text = ''
     color = ''
     ct = 0
-    # px_w = 260
-    # px_h = 90
-    # text_size = 18
+
     left_handed = False
 
     icons_margin_a = 30
@@ -323,7 +260,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     active_layer_color = (0.28, 0.45, 0.7, 1.0) # Blue  (active color)
     empty_layer_color = (0.7, 0.5, 0.4, 1.0) # mid reddish grey # (0.5, 0.5, 0.5, 1.0) # mid grey
     hided_layer_color = (0.4, 0.4, 0.4, 1.0) # faded grey
-
 
     add_box = 24
 
