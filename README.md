@@ -104,6 +104,10 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.7.3 - 2023-01-16
+
+- fixed: layer navigation: sharper icons and centered with layer name, truncated if too long
+
 1.7.2 - 2023-01-15
 
 - changed: layer navigation has proper icons

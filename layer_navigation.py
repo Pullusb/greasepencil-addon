@@ -213,7 +213,8 @@ def draw_callback_px(self, context):
         blf.position(font_id, self.text_x, self.text_pos[i], 0)
         blf.size(font_id, self.text_size, 72)
         blf.color(font_id, *color)
-        blf.draw(font_id, l.info)
+        display_name = l.info if len(l.info) <= self.text_char_limit else l.info[:self.text_char_limit-3] + '...'
+        blf.draw(font_id, display_name)
 
     ## Drag text
     if self.dragging and self.drag_text:
@@ -239,8 +240,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     text = ''
     color = ''
     ct = 0
-
-    left_handed = False
 
     icons_margin_a = 30
     icons_margin_b = 54
@@ -280,6 +279,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     def invoke(self, context, event):
         # Load texture icons
         ## stored in a dict
+
         self.icon_size = 20
         self.icon_tex_coord = (
             Vector((0, 0)),
@@ -299,6 +299,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.px_h = prefs.box_height
         self.px_w = prefs.box_width
         self.text_size = prefs.text_size
+        self.text_char_limit = round((self.px_w + 10) / self.text_size)
         self.left_handed = prefs.left_handed
 
         # if not context.area.type == 'VIEW_3D':
