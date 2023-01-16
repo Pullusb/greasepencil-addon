@@ -65,54 +65,6 @@ hide_on = [
     Vector((10, 2)), Vector((16, 4)),
 ]
 
-## Test gizmoGroup to draw native icons
-class GPT_GGT_layer_icons(bpy.types.GizmoGroup):
-    bl_label = "Layer Icons"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-    bl_options = {'SCALE', 'PERSISTENT', 'SHOW_MODAL_ALL'} # , 'INTERNAL', 'PERSISTENT'
-
-    icon_size = 34 # currently more vertical gap size
-
-    @staticmethod
-    def set_gizmo_settings(gz, icon,
-            color=(0.0, 0.0, 0.0),
-            color_highlight=(0.5, 0.5, 0.5),
-            alpha=0.6,
-            alpha_highlight=0.6, # 0.1
-            show_drag=False,
-            draw_options={'BACKDROP', 'OUTLINE'},
-            scale_basis=24): # scale_basis default: 14
-        gz.icon = icon
-        # default 0.0
-        gz.color = color
-        # default 0.5
-        gz.color_highlight = color_highlight
-        gz.alpha = alpha
-        gz.alpha_highlight = alpha_highlight
-        gz.show_drag = show_drag
-        gz.draw_options = draw_options
-        gz.scale_basis = scale_basis
-        gz.use_draw_offset_scale = True
-
-    def setup(self, context):
-        ## Icon as Gizmo
-        self.gz = self.gizmos.new("GIZMO_GT_button_2d")
-        self.set_gizmo_settings(self.gz, 'LOCKED', draw_options=set())
-        ## Works without target (can be used just as icon)
-        # props = self.gz.target_set_operator("storytools.object_pan")
-
-    def draw_prepare(self, context):
-        region = context.region
-        # ui_scale = context.preferences.view.ui_scale
-
-        gz = self.gz
-        gz.use_draw_modal = True
-        gz.use_tooltip = False
-        gz.matrix_basis = Matrix.Translation((100, 100, 0))
-
-        ## On right border
-        # (2 * ui_scale + region.width - self.icon_size * ui_scale, region.height / 2 - self.icon_size, 0))
 
 def rectangle_tris_from_coords(quad_list):
     '''Get a list of Vector corner for a triangle
@@ -139,7 +91,7 @@ def move_layer_to_index(l, idx):
 
 def get_reduced_area_coord(context):
     w, h = context.region.width, context.region.height
-    
+
     ## minus tool leftbar + sidebar right
     regs = context.area.regions
     toolbar = regs[2]
@@ -163,7 +115,7 @@ def draw_callback_px(self, context):
     if context.area != self.current_area:
         return
     font_id = 0
-    
+
     ## timer for debug purposes
     # blf.position(font_id, 15, 30, 0)
     # blf.size(font_id, 20, 72)
@@ -189,6 +141,7 @@ def draw_callback_px(self, context):
     ## tex icon store
     icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
 
+
     for i, l in enumerate(self.gpl):
         ## rect coords from bottom left corner
 
@@ -196,11 +149,11 @@ def draw_callback_px(self, context):
         if i == self.ui_idx:
             active_case = [v + corner for v in self.case]
 
-        lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.px_h - self.icons_margin_top))
+        lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
         # Old width -70 (16 diff)
-        hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.px_h - self.icons_margin_top - 2)) # extra -2 to align better with lock
-        
+        hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.mid_height - int(self.icon_size / 2) - 2)) # extra -2 to align better with lock
+
         if l.lock:
             lock_rects += rectangle_tris_from_coords(
                 [v + corner for v in self.case]
@@ -213,7 +166,7 @@ def draw_callback_px(self, context):
             )
             # icons += [v + lock_coord for v in lock_off] # lineicons
             icons['unlocked'].append([v + lock_coord for v in self.icon_tex_coord])
-        
+
         # if l.hide: # lineicons
         #     icons += [v + hide_coord for v in hide_on] # lineicons
         # else: # lineicons
@@ -240,7 +193,7 @@ def draw_callback_px(self, context):
     ## TODO: idea : colorize squares according to stroke type in the layer
     # -> need to be check at invoke, maybe too heavy check
     # -> maybe not evaluate every stroke in layers...
-    
+
     ### --- Trace squares
     ## individual unlocked squares
     shader.uniform_float("color", self.bg_color)
@@ -256,7 +209,7 @@ def draw_callback_px(self, context):
     shader.uniform_float("color", self.opacity_bar_color)
     batch_lock = batch_for_shader(shader, 'TRIS', {"pos": opacity_bars})
     batch_lock.draw(shader)
-    
+
     ## opacity sliders
     shader.uniform_float("color", self.opacity_color)
     batch_lock = batch_for_shader(shader, 'TRIS', {"pos": opacitys})
@@ -264,7 +217,7 @@ def draw_callback_px(self, context):
 
     ### --- Trace Lines
     gpu.state.line_width_set(2.0)
-    
+
     ## line color
     shader.uniform_float("color", self.lines_color) # (1.0, 1.0, 1.0, 1.0)
     self.batch_lines.draw(shader)
@@ -272,8 +225,7 @@ def draw_callback_px(self, context):
     ## Lock/hide State icons
     # batch_icon = batch_for_shader(shader, 'LINES', {"pos": icons}) # lineicons
     # batch_icon.draw(shader) # lineicons
-    
-    
+
     ## Loop to draw tex icons
     for icon_name, coord_list in icons.items():
         texture = gpu.texture.from_image(self.icon_tex[icon_name])
@@ -355,7 +307,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
     icons_margin_a = 30
     icons_margin_b = 54
-    icons_margin_top = 20
 
     use_fade = False
     ## set as prop so change is remembered upon next launch
@@ -367,14 +318,13 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     lines_color = (0.5, 0.5, 0.5, 0.6)
     opacity_bar_color = (0.25, 0.25, 0.25, 1.0)
     opacity_color = (0.4, 0.4, 0.4, 1.0) # (0.28, 0.45, 0.7, 1.0)
-    
+
     other_layer_color = (0.8, 0.8, 0.8, 1.0) # strong grey
     active_layer_color = (0.28, 0.45, 0.7, 1.0) # Blue  (active color)
     empty_layer_color = (0.7, 0.5, 0.4, 1.0) # mid reddish grey # (0.5, 0.5, 0.5, 1.0) # mid grey
     hided_layer_color = (0.4, 0.4, 0.4, 1.0) # faded grey
 
-    icon_tex_coord = (Vector((0, 0)), Vector((20, 0)), Vector((20, 20)), Vector((0, 20)))
-    
+
     add_box = 24
 
     # value = None
@@ -387,19 +337,27 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             icon_folder = Path(__file__).parent / 'icons'
             img = bpy.data.images.load(filepath=str((icon_folder / img_name).with_suffix('.png')), check_existing=False)
             img.name = store_name
-        
+
         return img
 
 
     def invoke(self, context, event):
         # Load texture icons
         ## stored in a dict
+        self.icon_size = 20
+        self.icon_tex_coord = (
+            Vector((0, 0)),
+            Vector((self.icon_size, 0)),
+            Vector((self.icon_size, self.icon_size)),
+            Vector((0, self.icon_size))
+            )
+
         self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
         # self.locked_icon = self.get_icon('locked')
         # self.unlocked_icon = self.get_icon('unlocked')
         # self.hide_off_icon = self.get_icon('hide_off')
         # self.hide_on_icon = self.get_icon('hide_on')
-        
+
 
         prefs = get_addon_prefs().nav
         self.px_h = prefs.box_height
@@ -457,14 +415,16 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         ## define zones
         bottom_base = self.init_mouse.y - (self.org_index * self.px_h) #  - self.px_h / 2
         self.text_bottom = bottom_base - int(self.text_size / 2) # self.text_size #
-        self.bottom = bottom_base - int(self.px_h / 2)
+
+        self.mid_height = int(self.px_h / 2)
+        self.bottom = bottom_base - self.mid_height
         self.top = self.bottom + (self.px_h * self.id_num)
         if self.left_handed:
             self.left = self.init_mouse.x - int(self.px_w / 10)
         else:
             # right hand
             self.left = self.init_mouse.x - mid_square
-        
+
         ## Push from viewport borders if needed
         BL, BR, _1, _2 = get_reduced_area_coord(context)
 
@@ -490,10 +450,10 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         for i in range(self.id_num):
             y_coord = self.bottom + (i * self.px_h)
             self.lines += [(self.left, y_coord), (self.right, y_coord)]
-            
+
             # self.texts.append((self.gpl[i].info, self.text_bottom + (i * self.px_h)))
             self.text_pos.append(self.text_bottom + (i * self.px_h))
-            
+
             ## define index ranges
             self.ranges.append((y_coord, y_coord + self.px_h))
 
@@ -520,7 +480,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 [v + Vector((self.right,  height)) for v in box]
             )
             plus_lines += [v + Vector((self.right,  height)) for v in plus]
-        
+
         self.add_box_rects = []
         for box in self.add_box_zones:
             self.add_box_rects += rectangle_tris_from_coords(box)
@@ -534,7 +494,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((self.px_w, self.px_h)),
             Vector((self.px_w, 0)),
         ]
-        
+
         # self.opacity_slider_length = self.px_w - 80
         # self.opacity_slider_length = int(self.px_w / 2) # half-width
         self.opacity_slider_length = int(self.px_w * 68 / 100) # as width's percentage
@@ -568,9 +528,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
         self.first = True
         self.store_settings(context)
-        
-        ## Instanciate Gizmo icon ?
-        # bpy.utils.register_class(GPT_GGT_layer_icons)
 
         self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
         # self._timer = wm.event_timer_add(0.1, window=context.window)
@@ -584,13 +541,13 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         context.space_data.overlay.use_gpencil_fade_layers = True
         context.space_data.overlay.gpencil_fade_layer = self.fade_value
         self.use_fade=True
-    
+
     def stop_fade(self, context):
         context.space_data.overlay.use_gpencil_fade_layers = self.org_use_gpencil_fade_layers
         context.space_data.overlay.gpencil_fade_layer = self.org_gpencil_fade_layer
         self.use_fade=False
 
-    
+
     def store_settings(self, context):
         ## store values anyway
         self.org_use_gpencil_fade_layers = context.space_data.overlay.use_gpencil_fade_layers
@@ -632,9 +589,9 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             lock_col = True
         elif self.right - self.icons_margin_b - 6 <= self.mouse.x <= self.right - self.icons_margin_b + 20:
             hide_col = True
-        
+
         if hide_col or lock_col:
-            dist_from_case_bottom = self.px_h - self.icons_margin_top
+            dist_from_case_bottom = self.mid_height - int(self.icon_size / 2)
             for i, l in enumerate(self.gpl):
                 icon_base = self.bottom + (i * self.px_h) + dist_from_case_bottom
                 if icon_base - 4 <= self.mouse.y <= icon_base + 20:
@@ -647,7 +604,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                     return False
 
         ## Check if clicked on layer zone and remember which id
-        
+
         # if (self.left <= self.mouse.x <= self.right) and (self.bottom <= self.mouse.y <= self.top):
         ## remove selection limit from left
         if (self.mouse.x <= self.right) and (self.bottom <= self.mouse.y <= self.top):
@@ -662,7 +619,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             self.click_time = time()
             self.id_src = self.id_from_mouse() # self.ui_idx
             self.click_src = self.mouse.copy()
-            
+
             top_case = self.bottom + self.px_h * (self.ui_idx + 1)
             # extra 10 px from top
             # if (top_case - self.slider_height) <= self.mouse.y <= top_case:
@@ -694,7 +651,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         if event.type == self.key and event.value == 'RELEASE':
             self.stop_mod(context)
             return {'FINISHED'}
-        
+
         if event.type == 'X' and event.value == 'PRESS':
             # Toggle Xray
             context.object.show_in_front = not context.object.show_in_front
@@ -705,14 +662,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 self.stop_fade(context)
             else:
                 self.set_fade(context)
-        
+
         if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
             self.pressed = True
             stop = self.click(context)
             if stop:
                 self.stop_mod(context)
                 return {'FINISHED'}
-        
+
         ## toggle based on distance
         # self.dragging = self.pressed and (self.mouse - self.click_src).length > 4
 
@@ -725,7 +682,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 change = x_travel / self.opacity_slider_length # value 0 to 1.0
                 self.gpl[self.id_src].opacity = self.org_opacity + change
 
-            
+
         if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
             ## check if there was an ongoing drag action
             if self.dragging:
@@ -734,7 +691,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                     # print('move idx:', self.id_src, self.id_from_mouse())
                     move_layer_to_index(self.gpl[self.id_src], self.id_from_mouse())
                     self.id_src = None
-                
+
             self.pressed = self.dragging = False
             self.click_src = self.drag_text = self.drag_mode = None
 
@@ -755,14 +712,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             bpy.ops.gpencil.layer_isolate(affect_visibility=True)
         if event.type == 'L' and event.value == 'PRESS':
             bpy.ops.gpencil.layer_isolate(affect_visibility=False)
-                
+
             # return {'RUNNING_MODAL'}
 
         for i, (bottom, top) in enumerate(self.ranges):
             if bottom < self.mouse.y < top:
                 self.ui_idx = i
                 break
-        
+
         if self.ui_idx == current_idx:
             return {'RUNNING_MODAL'}
         else:
@@ -799,7 +756,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         #     if self.lapse >= self.limit:
         #         self.stop_mod(context)
         #         return {'FINISHED'}
-                        
+
 
         # if trigger:
         #     if self.first:
@@ -821,10 +778,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         wm = context.window_manager
         # wm.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-        
-        ## remove Gyzmo Group icons
-        # del self.icon_gyzmos # remove the class
-        # bpy.utils.unregister_class(GPT_GGT_layer_icons)
 
         context.area.tag_redraw()
 
@@ -855,7 +808,7 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
         soft_max=350,
         step=1,
         subtype='PIXEL')
-    
+
     text_size: IntProperty(
         name="Label Size",
         description="Layer name label size",
@@ -866,7 +819,7 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
         soft_max=20,
         step=1,
         subtype='PIXEL')
-    
+
     left_handed: BoolProperty(
         name='Left Handed',
         description="Pop-up appear offseted at the right of the mouse pointer\
@@ -885,7 +838,7 @@ def draw_nav_pref(prefs, layout):
     row = col.row()
     row.prop(prefs, 'box_height')
     row.prop(prefs, 'box_width')
-    
+
     row = col.row()
     row.prop(prefs, 'text_size')
     row.prop(prefs, 'left_handed')
@@ -912,11 +865,10 @@ def register_keymaps():
 def unregister_keymaps():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
-    
+
     addon_keymaps.clear()
 
 classes = (
-    # GPT_GGT_layer_icons,
     GPT_OT_viewport_layer_nav_osd,
 )
 
