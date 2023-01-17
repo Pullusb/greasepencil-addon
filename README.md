@@ -104,6 +104,12 @@ This is available in the sidebar > Tool > Brushes panel in the brush dropdown me
 
 ## Changelog
 
+1.7.4 - 2023-01-17
+
+- added: layer navigation respect ui scale
+- added: layer navigation opacity bar height adjust proportionally to box height
+- fixed: layer navigation opacity slider does not trigger fade anymore when going out of out bounds.
+
 1.7.3 - 2023-01-16
 
 - fixed: layer navigation: sharper icons and centered with layer name, truncated if too long

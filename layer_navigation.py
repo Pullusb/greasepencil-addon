@@ -242,8 +242,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     color = ''
     ct = 0
 
-    icons_margin_a = 30
-    icons_margin_b = 54
 
     use_fade = False
     ## set as prop so change is remembered upon next launch
@@ -261,10 +259,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     empty_layer_color = (0.7, 0.5, 0.4, 1.0) # mid reddish grey # (0.5, 0.5, 0.5, 1.0) # mid grey
     hided_layer_color = (0.4, 0.4, 0.4, 1.0) # faded grey
 
-    add_box = 24
-
-    # value = None
-    texts=[]
+    # texts=[]
 
     def get_icon(self, img_name):
         store_name = '.' + img_name
@@ -278,31 +273,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
 
     def invoke(self, context, event):
-        # Load texture icons
-        ## stored in a dict
-
-        self.icon_size = 20
-        self.icon_tex_coord = (
-            Vector((0, 0)),
-            Vector((self.icon_size, 0)),
-            Vector((self.icon_size, self.icon_size)),
-            Vector((0, self.icon_size))
-            )
-
-        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
-        # self.locked_icon = self.get_icon('locked')
-        # self.unlocked_icon = self.get_icon('unlocked')
-        # self.hide_off_icon = self.get_icon('hide_off')
-        # self.hide_on_icon = self.get_icon('hide_on')
-
-
-        prefs = get_addon_prefs().nav
-        self.px_h = prefs.box_height
-        self.px_w = prefs.box_width
-        self.text_size = prefs.text_size
-        self.text_char_limit = round((self.px_w + 10) / self.text_size)
-        self.left_handed = prefs.left_handed
-
         # if not context.area.type == 'VIEW_3D':
         #     self.report({'WARNING'}, "View3D not found, cannot run operator")
         #     return {'CANCELLED'}
@@ -312,6 +282,36 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         # if not 'GPENCIL' in context.mode:
         #     self.report({'WARNING'}, "Need to be in a grease pencil mode")
         #     return {'CANCELLED'}
+
+        # Load texture icons
+        ## stored in a dict
+
+        ui_scale = bpy.context.preferences.system.ui_scale
+        self.icon_size = int(20 * ui_scale)
+        self.icon_tex_coord = (
+            Vector((0, 0)),
+            Vector((self.icon_size, 0)),
+            Vector((self.icon_size, self.icon_size)),
+            Vector((0, self.icon_size))
+            )
+
+        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
+    
+        prefs = get_addon_prefs().nav
+        self.px_h = int(prefs.box_height * ui_scale)
+        self.px_w = int(prefs.box_width * ui_scale)
+        self.add_box = int(24 * ui_scale)
+        self.text_size = int(prefs.text_size * ui_scale)
+        self.text_char_limit = round((self.px_w + 10 * ui_scale) / self.text_size)
+        self.left_handed = prefs.left_handed
+        self.icons_margin_a = int(30 * ui_scale)
+        self.icons_margin_b = int(54 * ui_scale)
+        
+        self.opacity_slider_length = int(self.px_w * 72 / 100) # as width's percentage
+        # self.opacity_slider_length = self.px_w # full width
+
+        # self.slider_height = int(8 * ui_scale) # Fixed size slider
+        self.slider_height = int(self.px_h / 3.7) # Proportional slider
 
         self.key = event.type
 
@@ -327,6 +327,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         if len(self.gpl) == 1:
             self.report({'WARNING'}, "Only one layer")
             return {'CANCELLED'}
+
         self.layer_list = [(l.info, l) for l in self.gpl]
         self.ui_idx = self.org_index = context.object.data.layers.active_index
         self.id_num = len(self.layer_list)
@@ -433,10 +434,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((self.px_w, 0)),
         ]
 
-        # self.opacity_slider_length = self.px_w - 80
-        # self.opacity_slider_length = int(self.px_w / 2) # half-width
-        self.opacity_slider_length = int(self.px_w * 68 / 100) # as width's percentage
-        self.slider_height = 10
         self.opacity_slider = [
             Vector((0, self.px_h - self.slider_height)),
             Vector((0, self.px_h)),
@@ -523,16 +520,17 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
         ## check hide / lock toggles
         hide_col = lock_col = False
-        if self.right - self.icons_margin_a <= self.mouse.x <= self.right - self.icons_margin_a + 20:
+
+        if self.right - self.icons_margin_a <= self.mouse.x <= self.right - self.icons_margin_a + self.icon_size:
             lock_col = True
-        elif self.right - self.icons_margin_b - 6 <= self.mouse.x <= self.right - self.icons_margin_b + 20:
+        elif self.right - self.icons_margin_b <= self.mouse.x <= self.right - self.icons_margin_b + self.icon_size:
             hide_col = True
 
         if hide_col or lock_col:
             dist_from_case_bottom = self.mid_height - int(self.icon_size / 2)
             for i, l in enumerate(self.gpl):
                 icon_base = self.bottom + (i * self.px_h) + dist_from_case_bottom
-                if icon_base - 4 <= self.mouse.y <= icon_base + 20:
+                if icon_base - 4 <= self.mouse.y <= icon_base + self.icon_size:
                     if hide_col:
                         self.gpl[i].hide = not self.gpl[i].hide # l.hide = not l.hide
                         self.drag_mode = 'hide' if self.gpl[i].hide else 'unhide'
@@ -561,7 +559,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             top_case = self.bottom + self.px_h * (self.ui_idx + 1)
             # extra 10 px from top
             # if (top_case - self.slider_height) <= self.mouse.y <= top_case:
-            if (top_case - 20) <= self.mouse.y <= top_case:
+            if (top_case - self.slider_height) <= self.mouse.y <= top_case:
                 ## On opacity slider
                 self.drag_text = 'opacity_level'
                 self.drag_mode = 'opacity'
@@ -633,13 +631,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             self.pressed = self.dragging = False
             self.click_src = self.drag_text = self.drag_mode = None
 
-        ## Set Fade when passing sides of the list
-        if self.left < self.mouse.x < self.right + self.add_box:
-            if self.use_fade:
-                self.stop_fade(context)
-        else:
-            if not self.use_fade:
-                self.set_fade(context)
+        ## Set Fade when passing sides of the list (except if dragging opacity)
+        if not (self.dragging and self.drag_mode == 'opacity'):
+            if self.left < self.mouse.x < self.right + self.add_box:
+                if self.use_fade:
+                    self.stop_fade(context)
+            else:
+                if not self.use_fade:
+                    self.set_fade(context)
 
         ## Swap autolock
         if event.type == 'T' and event.value == 'PRESS':
