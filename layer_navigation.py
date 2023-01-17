@@ -101,7 +101,8 @@ def draw_callback_px(self, context):
         lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
         # Old width -70 (16 diff)
-        hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.mid_height - int(self.icon_size / 2) - 2)) # extra -2 to align better with lock
+        hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.mid_height - int(self.icon_size / 2)))
+
 
         if l.lock:
             lock_rects += rectangle_tris_from_coords(
