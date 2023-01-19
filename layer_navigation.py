@@ -100,7 +100,6 @@ def draw_callback_px(self, context):
 
         lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
-        # Old width -70 (16 diff)
         hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.mid_height - int(self.icon_size / 2)))
 
 
@@ -133,10 +132,6 @@ def draw_callback_px(self, context):
                 [corner + v for v in self.opacity_slider[:2]]
                 + [corner +  Vector((int(v[0] * l.opacity), v[1])) for v in self.opacity_slider[2:]]
             )
-
-    ## TODO: idea : colorize squares according to stroke type in the layer
-    # -> need to be check at invoke, maybe too heavy check
-    # -> maybe not evaluate every stroke in layers...
 
     ### --- Trace squares
     ## individual unlocked squares
@@ -234,17 +229,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_description = "Change active GP layer with a viewport interactive OSD"
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    # interval = 0.1
-    # limit = 2.2
 
     lapse = 0
     text = ''
     color = ''
     ct = 0
 
-
     use_fade = False
-    ## set as prop so change is remembered upon next launch
+    ## Set as prop so change is remembered upon next launch
     # use_fade : bpy.props.BoolProperty(name='Fade other layer', default=False)
     fade_value = 0.15
 
@@ -259,8 +251,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     empty_layer_color = (0.7, 0.5, 0.4, 1.0) # mid reddish grey # (0.5, 0.5, 0.5, 1.0) # mid grey
     hided_layer_color = (0.4, 0.4, 0.4, 1.0) # faded grey
 
-    # texts=[]
-
     def get_icon(self, img_name):
         store_name = '.' + img_name
         img = bpy.data.images.get(store_name)
@@ -271,22 +261,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
         return img
 
-
     def invoke(self, context, event):
-        # if not context.area.type == 'VIEW_3D':
-        #     self.report({'WARNING'}, "View3D not found, cannot run operator")
-        #     return {'CANCELLED'}
-        # if not context.object or context.object.type != 'GPENCIL':
-        #     self.report({'WARNING'}, "Active object not a Grease pencil object")
-        #     return {'CANCELLED'}
-        # if not 'GPENCIL' in context.mode:
-        #     self.report({'WARNING'}, "Need to be in a grease pencil mode")
-        #     return {'CANCELLED'}
-
-        # Load texture icons
-        ## stored in a dict
-
         ui_scale = bpy.context.preferences.system.ui_scale
+        
+        # Load texture icons
+        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
         self.icon_size = int(20 * ui_scale)
         self.icon_tex_coord = (
             Vector((0, 0)),
@@ -295,8 +274,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((0, self.icon_size))
             )
 
-        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
-    
         prefs = get_addon_prefs().nav
         self.px_h = int(prefs.box_height * ui_scale)
         self.px_w = int(prefs.box_width * ui_scale)
@@ -307,11 +284,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.icons_margin_a = int(30 * ui_scale)
         self.icons_margin_b = int(54 * ui_scale)
         
-        self.opacity_slider_length = int(self.px_w * 72 / 100) # as width's percentage
-        # self.opacity_slider_length = self.px_w # full width
+        self.opacity_slider_length = int(self.px_w * 72 / 100) # As width's percentage
+        # self.opacity_slider_length = self.px_w # Full width
 
-        # self.slider_height = int(8 * ui_scale) # Fixed size slider
         self.slider_height = int(self.px_h / 3.7) # Proportional slider
+        # self.slider_height = int(8 * ui_scale) # Fixed size slider
 
         self.key = event.type
 
@@ -322,10 +299,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         ## get layers
         self.gpl = context.object.data.layers
         if not len(self.gpl):
-            self.report({'WARNING'}, "No layer to show")
-            return {'CANCELLED'}
-        if len(self.gpl) == 1:
-            self.report({'WARNING'}, "Only one layer")
+            self.report({'WARNING'}, "No layer to display")
             return {'CANCELLED'}
 
         self.layer_list = [(l.info, l) for l in self.gpl]
@@ -352,8 +326,8 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         max_w = self.px_w + self.add_box
         mid_square = int(self.px_w / 2)
         ## define zones
-        bottom_base = self.init_mouse.y - (self.org_index * self.px_h) #  - self.px_h / 2
-        self.text_bottom = bottom_base - int(self.text_size / 2) # self.text_size #
+        bottom_base = self.init_mouse.y - (self.org_index * self.px_h)
+        self.text_bottom = bottom_base - int(self.text_size / 2)
 
         self.mid_height = int(self.px_h / 2)
         self.bottom = bottom_base - self.mid_height
@@ -367,7 +341,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         ## Push from viewport borders if needed
         BL, BR, _1, _2 = get_reduced_area_coord(context)
 
-        over_right = (self.left + max_w) - (BR[0] + 10) # from sidebar border
+        over_right = (self.left + max_w) - (BR[0] + 10 * ui_scale) # from sidebar border
         # over_right = (self.left + max_w) - (context.area.width - 20) # from right border
         if over_right > 0:
             self.left = self.left - over_right
@@ -496,7 +470,8 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         for i, (bottom, top) in enumerate(self.ranges):
             if bottom < v.y < top:
                 return i
-        return i # return min if below and max if above instead of None
+        # Return min if below and max if above instead of None
+        return i
 
     def id_from_mouse(self):
         return self.id_from_coord(self.mouse)
@@ -557,8 +532,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             self.click_src = self.mouse.copy()
 
             top_case = self.bottom + self.px_h * (self.ui_idx + 1)
-            # extra 10 px from top
-            # if (top_case - self.slider_height) <= self.mouse.y <= top_case:
             if (top_case - self.slider_height) <= self.mouse.y <= top_case:
                 ## On opacity slider
                 self.drag_text = 'opacity_level'
@@ -574,10 +547,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         context.area.tag_redraw()
         self.mouse = Vector((event.mouse_region_x, event.mouse_region_y))
         current_idx = context.object.data.layers.active_index
-
-        ## key tester
-        # if event.type not in {self.key, 'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE', 'TIMER_REPORT'}:
-        #     print('key:', event.type, 'value:', event.value)
 
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             self.stop_mod(context)
@@ -672,37 +641,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                     self.gpl[self.ui_idx].lock = True
                 if self.drag_mode == 'unlock' and self.gpl[self.ui_idx].lock:
                     self.gpl[self.ui_idx].lock = False
-
-
-        # if event.type == 'TIMER':
-        #     #print(self._timer.time_delta, self._timer.time_duration, self._timer.time_step)
-        #     self.lapse += self.interval
-        #     self.text = '{:.1f}'.format(self.lapse)
-
-        #     for text in self.texts:
-        #         text.tick += self.interval
-        #         if text.tick > text.up_time:
-        #             if text.tick >= text.up_time + text.fade_time:
-        #                 self.texts.pop(self.texts.index(text))
-        #             else:
-        #                 ## just decrement alpha
-        #                 alpha = text.color[3] - self.interval / text.fade_time
-        #                 alpha = 0 if alpha < 0 else alpha#clamp to 0
-        #                 text.color[3] -= self.interval / text.fade_time
-
-        #     if self.lapse >= self.limit:
-        #         self.stop_mod(context)
-        #         return {'FINISHED'}
-
-
-        # if trigger:
-        #     if self.first:
-        #         self.store_settings(context)
-        #         self.first=False
-        #     self.lapse = 0#reset counter
-
-        #     for text in self.texts:
-        #         text.y += 30#move up previous
 
         return {'RUNNING_MODAL'} # running modal prevent original usage to be triggered (capture keys)
 

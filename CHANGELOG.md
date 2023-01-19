@@ -1,5 +1,11 @@
 # Changelog
 
+1.7.5 - 2023-01-19
+
+- changed: layer navigation is still called when there is only one layer
+- changed: Preferences panel use one tab per tool (was too long with added layer nav tool)
+
+
 1.7.4 - 2023-01-17
 
 - added: layer navigation respect ui scale

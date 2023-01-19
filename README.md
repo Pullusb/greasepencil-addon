@@ -94,8 +94,32 @@ You can affect influence in the redo panel (press F9 to pop up the redo panel).
 Influence amount is remembered for next use (You can shift+click on the button to reset and force the use of 100% influence)
 
 
+## Layer navigator
+
+Continuous press on `Y` key override default layer popup with a custom drawn panel.
+
+- When panel pop, active layer is always under mouse
+- Active layer is changed just by hovering over layer and releasing key
+- Opacity, hide, lock can be tweaked per layer in popup
+- Passing the border of the popup will fade inactive layer (allow to quickly inspect layer content)
+- Layers can be reordered with drag'n'drop
+- `+` button on the right add layer above current
+- Extra shortcuts are enabled while layer navigation popup is called:
+  - `H` toggle all hide
+  - `L` toggle all lock
+  - `T` toggle auto-lock
+
 ## Import textured brush pack
 
 Install included [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  
 This is available in the sidebar > Tool > Brushes panel in the brush dropdown menu (where you can reset brush)  
 /!\ This will be removed once blender official asset manager will be active
+
+
+<!-- 
+## TODO:
+
+idea : colorize squares according to stroke type in the layer
+    -> need to be check at invoke, maybe too heavy check
+    -> maybe not evaluate every stroke in layers...
+-->
