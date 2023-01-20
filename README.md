@@ -109,6 +109,8 @@ Continuous press on `Y` key override default layer popup with a custom drawn pan
   - `L` toggle all lock
   - `T` toggle auto-lock
 
+- `Right-click` or `Escape` to set original active layer
+
 ## Import textured brush pack
 
 Install included [Grease pencil textured brush pack]((https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b)) made by [pepeland (Daniel Martinez Lara)](https://www.pepe-school-land.com/pepeland)  

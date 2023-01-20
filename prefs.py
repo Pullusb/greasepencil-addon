@@ -20,7 +20,7 @@ def get_addon_prefs():
     return (addon_prefs)
 
 from .timeline_scrub import GPTS_timeline_settings, draw_ts_pref
-from .layer_navigation import GPNAV_layer_navigation_settings, draw_nav_pref
+from .layer_navigator import GPNAV_layer_navigator_settings, draw_nav_pref
 
 ## Addons Preferences Update Panel
 def update_panel(self, context):
@@ -40,7 +40,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     bl_idname = os.path.splitext(__name__)[0] #__package__
 
     ts: PointerProperty(type=GPTS_timeline_settings)
-    nav: PointerProperty(type=GPNAV_layer_navigation_settings)
+    nav: PointerProperty(type=GPNAV_layer_navigator_settings)
 
 
     category : StringProperty(
@@ -57,7 +57,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         ('canvas_rotate', 'Canvas Rotate', 'Canvas Rotate tool shortcut and prefs', 0),
         ('box_deform', 'Box Deform', 'Box Deform tool prefs', 1),
         ('timeline_scrub', 'Timeline Scrub', 'Timeline Scrub tool shortcut and prefs', 2),
-        ('layer_navigation', 'Layer Navigation', 'Layer Navigation tool shortcut and prefs', 3),
+        ('layer_navigator', 'Layer Navigation', 'Layer Navigation tool shortcut and prefs', 3),
         ),
     )
     
@@ -214,7 +214,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 box = layout.box()
                 draw_ts_pref(prefs.ts, box)
             
-            if self.pref_tab == 'layer_navigation':
+            if self.pref_tab == 'layer_navigator':
                 ## LAYER NAVIGATION
                 box = layout.box()
                 draw_nav_pref(prefs.nav, box)
@@ -286,7 +286,7 @@ def unregister_keymaps():
 
 classes = (
     GPTS_timeline_settings,
-    GPNAV_layer_navigation_settings,
+    GPNAV_layer_navigator_settings,
     GPT_MT_box_deform_doc,
     GreasePencilAddonPrefs,
 )

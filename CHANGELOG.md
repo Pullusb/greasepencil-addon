@@ -1,32 +1,37 @@
 # Changelog
 
+
+1.7.6 - 2023-01-20
+
+- changed: layer nav keymap registered globally on grease pencil (meaning it's accessible from object mode)
+- added: Customizable keymap exposed in `layer navigator` preferences
+
 1.7.5 - 2023-01-19
 
-- changed: layer navigation is still called when there is only one layer
+- changed: layer navigator is still called when there is only one layer
 - changed: Preferences panel use one tab per tool (was too long with added layer nav tool)
-
 
 1.7.4 - 2023-01-17
 
-- added: layer navigation respect ui scale
-- added: layer navigation opacity slider height adjust proportionally to box height
-- fixed: layer navigation opacity slider does not trigger fade anymore when dragging out of bounds.
+- added: layer navigator respect ui scale
+- added: layer navigator opacity slider height adjust proportionally to box height
+- fixed: layer navigator opacity slider does not trigger fade anymore when dragging out of bounds.
 
 1.7.3 - 2023-01-16
 
-- fixed: layer navigation: sharper icons and centered with layer name, truncated if too long
+- fixed: layer navigator has sharper icons and centered with layer name, truncated if too long
 
 1.7.2 - 2023-01-15
 
-- changed: layer navigation has proper icons
+- changed: layer navigator has proper icons
 
 1.7.1 - 2022-11-08
 
-- added: initial set of preferences for layer navigation
+- added: initial set of preferences for layer navigator
 
 1.7.0 - 2022-11-06
 
-- added: layer navigation popup on `Y` shortcut
+- added: layer navigator popup on `Y` shortcut
 
 1.6.2 - 2022-10-01
 

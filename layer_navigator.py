@@ -229,6 +229,9 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_description = "Change active GP layer with a viewport interactive OSD"
     bl_options = {'REGISTER', 'INTERNAL'}
 
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type == 'GPENCIL'
 
     lapse = 0
     text = ''
@@ -657,7 +660,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         context.area.tag_redraw()
 
 
-class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
+class GPNAV_layer_navigator_settings(bpy.types.PropertyGroup):
 
     # sizes
     box_height: IntProperty(
@@ -701,14 +704,109 @@ class GPNAV_layer_navigation_settings(bpy.types.PropertyGroup):
             \nto avoif hand occluding layer label",
         default=False)
 
+def _indented_layout(layout, level):
+    indentpx = 16
+    if level == 0:
+        level = 0.0001   # Tweak so that a percentage of 0 won't split by half
+    indent = level * indentpx / bpy.context.region.width
 
+    split = layout.split(factor=indent)
+    col = split.column()
+    col = split.column()
+    return col
+
+def draw_keymap_ui_custom(km, kmi, layout):
+    # col = layout.column()
+    col = _indented_layout(layout, 0)
+    if kmi.show_expanded:
+        col = col.column(align=True)
+        box = col.box()
+    else:
+        box = col.column()
+
+    split = box.split()
+
+    row = split.row(align=True)
+    row.prop(kmi, "show_expanded", text="", emboss=False)
+    row.prop(kmi, "active", text="", emboss=False)
+    row.label(text=kmi.name)
+
+    row = split.row()
+    map_type = kmi.map_type
+    row.prop(kmi, "map_type", text="")
+    if map_type == 'KEYBOARD':
+        row.prop(kmi, "type", text="", full_event=True)
+    elif map_type == 'MOUSE':
+        row.prop(kmi, "type", text="", full_event=True)
+    elif map_type == 'NDOF':
+        row.prop(kmi, "type", text="", full_event=True)
+    elif map_type == 'TWEAK':
+        subrow = row.row()
+        subrow.prop(kmi, "type", text="")
+        subrow.prop(kmi, "value", text="")
+    elif map_type == 'TIMER':
+        row.prop(kmi, "type", text="")
+    else:
+        row.label()
+
+    if (not kmi.is_user_defined) and kmi.is_user_modified:
+        ops = row.operator("gp.restore_keymap_item", text="", icon='BACK') # modified
+        ops.km_name = km.name
+        ops.kmi_name = kmi.idname
+    else:
+        row.label(text='', icon='BLANK1')
+
+    # Expanded, additional event settings
+    if kmi.show_expanded:
+        col = col.column()
+        box = col.box()
+
+        split = box.column()
+
+        if map_type not in {'TEXTINPUT', 'TIMER'}:
+            sub = split.column()
+            subrow = sub.row(align=True)
+
+            if map_type == 'KEYBOARD':
+                subrow.prop(kmi, "type", text="", event=True)
+                
+                ## Hide value (Should always be Press)
+                # subrow.prop(kmi, "value", text="")
+
+                ## Hide repeat
+                # subrow_repeat = subrow.row(align=True)
+                # subrow_repeat.active = kmi.value in {'ANY', 'PRESS'}
+                # subrow_repeat.prop(kmi, "repeat", text="Repeat")
+
+            elif map_type in {'MOUSE', 'NDOF'}:
+                subrow.prop(kmi, "type", text="")
+                subrow.prop(kmi, "value", text="")
+
+            if map_type in {'KEYBOARD', 'MOUSE'} and kmi.value == 'CLICK_DRAG':
+                subrow = sub.row()
+                subrow.prop(kmi, "direction")
+            
+            sub = box.column()
+            subrow = sub.row()
+            subrow.scale_x = 0.75
+            subrow.prop(kmi, "any", toggle=True)
+            if bpy.app.version >= (3,0,0):
+                subrow.prop(kmi, "shift_ui", toggle=True)
+                subrow.prop(kmi, "ctrl_ui", toggle=True)
+                subrow.prop(kmi, "alt_ui", toggle=True)
+                subrow.prop(kmi, "oskey_ui", text="Cmd", toggle=True)
+            else:
+                subrow.prop(kmi, "shift", toggle=True)
+                subrow.prop(kmi, "ctrl", toggle=True)
+                subrow.prop(kmi, "alt", toggle=True)
+                subrow.prop(kmi, "oskey", text="Cmd", toggle=True)
+            
+            subrow.prop(kmi, "key_modifier", text="", event=True)
 
 def draw_nav_pref(prefs, layout):
     # - General settings
     layout.label(text='Layer Navigation:')
-    # layout.prop(prefs, 'use')
-    # if not prefs.use:
-    #     return
+
     col = layout.column()
     row = col.row()
     row.prop(prefs, 'box_height')
@@ -719,6 +817,23 @@ def draw_nav_pref(prefs, layout):
     row.prop(prefs, 'left_handed')
 
     # -/ Keymap -
+    if not addon_keymaps:
+        return
+
+    layout.separator()
+    layout.label(text='Keymap:')
+    
+
+    for akm, akmi in addon_keymaps:
+        km = bpy.context.window_manager.keyconfigs.user.keymaps.get(akm.name)
+        if not km:
+            continue
+        kmi = km.keymap_items.get(akmi.idname)
+        if not kmi:
+            continue
+        
+        draw_keymap_ui_custom(km, kmi, layout)
+        # draw_kmi_custom(km, kmi, box)
 
 
 addon_keymaps = []
@@ -726,16 +841,10 @@ addon_keymaps = []
 def register_keymaps():
     addon = bpy.context.window_manager.keyconfigs.addon
 
-    for name in [
-        "Grease Pencil Stroke Paint Mode",
-        "Grease Pencil Stroke Edit Mode",
-        "Grease Pencil Stroke Sculpt Mode",
-        "Grease Pencil Stroke Vertex Mode",
-        "Grease Pencil Stroke Weight Mode",
-            ]:
-        km = addon.keymaps.new(name = name, space_type = "EMPTY")
-        kmi = km.keymap_items.new('gpencil.viewport_layer_nav_osd', type='Y', value='PRESS')
-        addon_keymaps.append((km, kmi))
+    km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
+    kmi = km.keymap_items.new('gpencil.viewport_layer_nav_osd', type='Y', value='PRESS')
+    kmi.repeat = False
+    addon_keymaps.append((km, kmi))
 
 def unregister_keymaps():
     for km, kmi in addon_keymaps:
