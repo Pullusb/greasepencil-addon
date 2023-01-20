@@ -54,10 +54,10 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     name="Preference Tool Tab", description="Choose tool preferences to display",
     default='canvas_rotate',
     items=(
-        ('canvas_rotate', 'Canvas Rotate', 'Canvas Rotate tool shortcut and prefs', 0),
+        ('canvas_rotate', 'Rotate Canvas', 'Canvas Rotate tool shortcut and prefs', 0),
         ('box_deform', 'Box Deform', 'Box Deform tool prefs', 1),
         ('timeline_scrub', 'Timeline Scrub', 'Timeline Scrub tool shortcut and prefs', 2),
-        ('layer_navigator', 'Layer Navigation', 'Layer Navigation tool shortcut and prefs', 3),
+        ('layer_navigator', 'Layer Navigator', 'Layer Navigation tool shortcut and prefs', 3),
         ),
     )
     
@@ -172,7 +172,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             if self.pref_tab == 'canvas_rotate':
                 ## ROTATE CANVAS
                 box = layout.box()
-                box.label(text='Rotate canvas:')
+                box.label(text='Rotate Canvas:')
 
                 box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
@@ -215,7 +215,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 draw_ts_pref(prefs.ts, box)
             
             if self.pref_tab == 'layer_navigator':
-                ## LAYER NAVIGATION
+                ## LAYER NAVIGATOR
                 box = layout.box()
                 draw_nav_pref(prefs.nav, box)
 

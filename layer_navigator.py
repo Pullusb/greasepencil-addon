@@ -805,7 +805,7 @@ def draw_keymap_ui_custom(km, kmi, layout):
 
 def draw_nav_pref(prefs, layout):
     # - General settings
-    layout.label(text='Layer Navigation:')
+    layout.label(text='Layer Navigator:')
 
     col = layout.column()
     row = col.row()

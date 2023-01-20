@@ -104,12 +104,11 @@ Continuous press on `Y` key override default layer popup with a custom drawn pan
 - Passing the border of the popup will fade inactive layer (allow to quickly inspect layer content)
 - Layers can be reordered with drag'n'drop
 - `+` button on the right add layer above current
-- Extra shortcuts are enabled while layer navigation popup is called:
+- Extra shortcuts are enabled while layer navigator popup is called:
   - `H` toggle all hide
   - `L` toggle all lock
   - `T` toggle auto-lock
-
-- `Right-click` or `Escape` to set original active layer
+  - `Right-click` or `Escape` to set original active layer
 
 ## Import textured brush pack
 
