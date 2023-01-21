@@ -1,17 +1,12 @@
 import bpy
 import blf, gpu
+import math
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 from time import time
 from pathlib import Path
 
-from bpy.props import (BoolProperty,
-                       StringProperty,
-                       IntProperty,
-                       FloatVectorProperty,
-                       IntProperty,
-                       PointerProperty,
-                       EnumProperty)
+from bpy.props import (BoolProperty, IntProperty)
 
 from .prefs import get_addon_prefs
 
@@ -29,6 +24,13 @@ def rectangle_tris_from_coords(quad_list):
             quad_list[3],
             quad_list[2]
         ]
+
+
+def round_to_ceil_even(f):
+  if (math.floor(f) % 2 == 0): 
+    return math.floor(f)
+  else: 
+    return math.floor(f) + 1
 
 def move_layer_to_index(l, idx):
     a = [i for i, lay in enumerate(l.id_data.layers) if lay == l][0]
@@ -87,16 +89,38 @@ def draw_callback_px(self, context):
     opacitys = []
     opacity_bars = []
     active_case = []
+    active_width = float(round_to_ceil_even(4.0 * context.preferences.system.ui_scale))
+    
     ## tex icon store
     icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
 
-
     for i, l in enumerate(self.gpl):
-        ## rect coords from bottom left corner
+        ## Rectangle coords CW from bottom-left corner
 
         corner = Vector((self.left, self.bottom + self.px_h * i))
         if i == self.ui_idx:
+            # With LINE_STRIP: Repeat first coordinate to close square with line_strip shader
+            # active_case = [v + corner for v in self.case] + [self.case[0] + corner]
+
+            ## With LINES: width offset to avoid jaggy corner
+            # Convert single corners point to flattened line vector pairs
             active_case = [v + corner for v in self.case]
+            flattened_line_pairs = []
+            for i in range(len(active_case)):
+                flattened_line_pairs += [active_case[i], active_case[(i+1) % len(active_case)]]
+
+            # Build offset table
+            px_offset = int(active_width / 2)
+            case_px_offsets = [
+                Vector((0, -px_offset)), Vector((0, px_offset)),
+                Vector((-px_offset, 0)), Vector((px_offset, 0)),
+                Vector((0, px_offset)), Vector((0, -px_offset)),
+                Vector((px_offset, 0)), Vector((-px_offset, 0)),
+                ]
+
+            # Apply offset to line tips
+            active_case = [v + offset for v, offset in zip(flattened_line_pairs, case_px_offsets)]
+            
 
         lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
@@ -122,7 +146,6 @@ def draw_callback_px(self, context):
 
 
         ## opacity sliders background
-        # if l.opacity != 1.0:
         opacity_bars += rectangle_tris_from_coords(
             [corner + v for v in self.opacity_slider]
         )
@@ -158,7 +181,7 @@ def draw_callback_px(self, context):
     gpu.state.line_width_set(2.0)
 
     ## line color
-    shader.uniform_float("color", self.lines_color) # (1.0, 1.0, 1.0, 1.0)
+    shader.uniform_float("color", self.lines_color)
     self.batch_lines.draw(shader)
 
     ## Loop to draw tex icons
@@ -178,11 +201,11 @@ def draw_callback_px(self, context):
             batch_icons.draw(shader_tex)
 
     ## Highlight active layer
-    gpu.state.line_width_set(4.0)
     if active_case:
-        shader.uniform_float("color", self.active_layer_color) # (1.0, 1.0, 1.0, 1.0)
-        active_case.append(active_case[0])
-        batch_active = batch_for_shader(shader, 'LINE_STRIP', {"pos": active_case})
+        gpu.state.line_width_set(active_width)
+        shader.uniform_float("color", self.active_layer_color)
+        # batch_active = batch_for_shader(shader, 'LINE_STRIP', {"pos": active_case})
+        batch_active = batch_for_shader(shader, 'LINES', {"pos": active_case})
         batch_active.draw(shader)
 
     gpu.state.line_width_set(1.0)
@@ -560,16 +583,16 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             self.stop_mod(context)
             return {'FINISHED'}
 
+        # Toggle Xray
         if event.type == 'X' and event.value == 'PRESS':
-            # Toggle Xray
             context.object.show_in_front = not context.object.show_in_front
 
         ## set fade with a key
-        if event.type == 'R' and event.value == 'PRESS':
-            if self.use_fade:
-                self.stop_fade(context)
-            else:
-                self.set_fade(context)
+        # if event.type == 'R' and event.value == 'PRESS':
+        #     if self.use_fade:
+        #         self.stop_fade(context)
+        #     else:
+        #         self.set_fade(context)
 
         if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
             self.pressed = True

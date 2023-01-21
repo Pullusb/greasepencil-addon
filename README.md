@@ -108,6 +108,7 @@ Continuous press on `Y` key override default layer popup with a custom drawn pan
   - `H` toggle all hide
   - `L` toggle all lock
   - `T` toggle auto-lock
+  - `X` toggle In Front value of the object
   - `Right-click` or `Escape` to set original active layer
 
 ## Import textured brush pack

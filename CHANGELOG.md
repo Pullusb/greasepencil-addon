@@ -1,5 +1,10 @@
 # Changelog
 
+1.7.7 - 2023-01-21
+
+- changed: layer nav greyed icon for off states
+- fixed: jaggy corner on active layer highlight 
+
 
 1.7.6 - 2023-01-20
 
