@@ -180,11 +180,20 @@ def draw_callback_px(self, context):
     ### --- Trace Lines
     gpu.state.line_width_set(2.0)
 
-    ## line color
+    ## line color (static)
     shader.uniform_float("color", self.lines_color)
     self.batch_lines.draw(shader)
+    
+    ## "Plus" lines
+    if self.gpl.active_index == 0:
+        plus_lines = self.plus_lines[:8]
+    else:
+        plus_lines = self.plus_lines[self.gpl.active_index * 4 + 4:self.gpl.active_index * 4 + 8]
+    batch_plus = batch_for_shader(
+        shader, 'LINES', {"pos": plus_lines})
+    batch_plus.draw(shader)
 
-    ## Loop to draw tex icons
+    ## Loop draw tex icons
     for icon_name, coord_list in icons.items():
         texture = gpu.texture.from_image(self.icon_tex[icon_name])
         for coords in coord_list:
@@ -268,7 +277,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
     bg_color = (0.1, 0.1, 0.1, 0.96)
     lock_color = (0.02, 0.02, 0.02, 0.98) # overlap opacity darken
-    lines_color = (0.5, 0.5, 0.5, 0.6)
+    lines_color = (0.5, 0.5, 0.5, 1.0)
     opacity_bar_color = (0.25, 0.25, 0.25, 1.0)
     opacity_color = (0.4, 0.4, 0.4, 1.0) # (0.28, 0.45, 0.7, 1.0)
 
@@ -303,7 +312,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         prefs = get_addon_prefs().nav
         self.px_h = int(prefs.box_height * ui_scale)
         self.px_w = int(prefs.box_width * ui_scale)
-        self.add_box = int(24 * ui_scale)
+        self.add_box = int(22 * ui_scale)
         self.text_size = int(prefs.text_size * ui_scale)
         self.text_char_limit = round((self.px_w + 10 * ui_scale) / self.text_size)
         self.left_handed = prefs.left_handed
@@ -406,26 +415,26 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         ]
 
         self.add_box_zones = []
-        mid = int(self.add_box / 2)
-        marg = int(self.add_box / 4)
+        mid = self.add_box / 2
+        marg = round_to_ceil_even(self.add_box / 4)
+        plus_length = round_to_ceil_even(self.add_box - marg * 2)
+
         plus = [
-            Vector((mid, marg)), Vector((mid, self.add_box - marg)),
-            Vector((marg, mid)), Vector((self.add_box - marg, mid)),
+            Vector((mid, marg)), Vector((mid, marg + plus_length)),
+            Vector((marg, mid)), Vector((marg + plus_length, mid)),
         ]
-        plus_lines = []
+        
+        self.plus_lines = []
         for i in range(len(self.gpl) + 1):
             height = self.bottom - self.add_box + (i * self.px_h)
             self.add_box_zones.append(
                 [v + Vector((self.right,  height)) for v in box]
             )
-            plus_lines += [v + Vector((self.right,  height)) for v in plus]
+            self.plus_lines += [v + Vector((self.right,  height)) for v in plus]
 
         self.add_box_rects = []
         for box in self.add_box_zones:
             self.add_box_rects += rectangle_tris_from_coords(box)
-
-        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-        # shader = gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')
 
         self.case = [
             Vector((0, 0)),
@@ -457,9 +466,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                     Vector((self.left, self.top)), Vector((self.left, self.bottom)),
                     Vector((self.right, self.top)), Vector((self.right, self.bottom))]
 
+        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
         self.batch_lines = batch_for_shader(
-            shader, 'LINES', {"pos": self.lines[2:] + plus_lines})
+            shader, 'LINES', {"pos": self.lines[2:]})
+            # shader, 'LINES', {"pos": self.lines[2:] + self.plus_lines}) #Show all '+'
 
         self.first = True
         self.store_settings(context)

@@ -1,5 +1,9 @@
 # Changelog
 
+1.7.8 - 2023-01-21
+
+- changed: layer nav show 'plus' sign only on side of active layer
+
 1.7.7 - 2023-01-21
 
 - changed: layer nav greyed icon for off states
