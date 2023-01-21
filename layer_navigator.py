@@ -25,7 +25,6 @@ def rectangle_tris_from_coords(quad_list):
             quad_list[2]
         ]
 
-
 def round_to_ceil_even(f):
   if (math.floor(f) % 2 == 0): 
     return math.floor(f)
@@ -271,8 +270,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     ct = 0
 
     use_fade = False
-    ## Set as prop so change is remembered upon next launch
-    # use_fade : bpy.props.BoolProperty(name='Fade other layer', default=False)
     fade_value = 0.15
 
     bg_color = (0.1, 0.1, 0.1, 0.96)
@@ -293,49 +290,13 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             icon_folder = Path(__file__).parent / 'icons'
             img = bpy.data.images.load(filepath=str((icon_folder / img_name).with_suffix('.png')), check_existing=False)
             img.name = store_name
-
         return img
 
-    def invoke(self, context, event):
+    def setup(self, context):
         ui_scale = bpy.context.preferences.system.ui_scale
-        
-        # Load texture icons
-        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
-        self.icon_size = int(20 * ui_scale)
-        self.icon_tex_coord = (
-            Vector((0, 0)),
-            Vector((self.icon_size, 0)),
-            Vector((self.icon_size, self.icon_size)),
-            Vector((0, self.icon_size))
-            )
-
-        prefs = get_addon_prefs().nav
-        self.px_h = int(prefs.box_height * ui_scale)
-        self.px_w = int(prefs.box_width * ui_scale)
-        self.add_box = int(22 * ui_scale)
-        self.text_size = int(prefs.text_size * ui_scale)
-        self.text_char_limit = round((self.px_w + 10 * ui_scale) / self.text_size)
-        self.left_handed = prefs.left_handed
-        self.icons_margin_a = int(30 * ui_scale)
-        self.icons_margin_b = int(54 * ui_scale)
-        
-        self.opacity_slider_length = int(self.px_w * 72 / 100) # As width's percentage
-        # self.opacity_slider_length = self.px_w # Full width
-
-        self.slider_height = int(self.px_h / 3.7) # Proportional slider
-        # self.slider_height = int(8 * ui_scale) # Fixed size slider
-
-        self.key = event.type
-
-        wm = context.window_manager
-        args = (self, context)
-
-        self.current_area = context.area
-        ## get layers
-        self.gpl = context.object.data.layers
-        if not len(self.gpl):
-            self.report({'WARNING'}, "No layer to display")
-            return {'CANCELLED'}
+        # if not len(self.gpl):
+        #     # Needed if delete is implemented
+        #     return {'CANCELLED'}
 
         self.layer_list = [(l.info, l) for l in self.gpl]
         self.ui_idx = self.org_index = context.object.data.layers.active_index
@@ -344,9 +305,8 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.drag_mode = None
         self.drag_text = None
         self.pressed = False
-        self.click_time = 0
+        # self.click_time = 0
         self.id_src = self.click_src = None
-        self.mouse = self.init_mouse = Vector((event.mouse_region_x, event.mouse_region_y))
 
         ## Structure:
         # 
@@ -405,7 +365,6 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             ## define index ranges
             self.ranges.append((y_coord, y_coord + self.px_h))
 
-
         ## add boxes 
         box = [
             Vector((0, 0)),
@@ -450,29 +409,63 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((self.opacity_slider_length, self.px_h - self.slider_height)),
         ]
 
-        # rectangle = rectangle_tris_from_coords([
-        #      Vector((self.left, self.bottom)),
-        #      Vector((self.left, self.top)),
-        #      Vector((self.right, self.top)),
-        #      Vector((self.right, self.bottom)),
-        #     ])
-        # self.batch_bg = batch_for_shader(
-        #     # shader, 'TRIS', {"pos": rectangle + self.add_box_rects}) # box around plus sign
-        #     shader, 'TRIS', {"pos": rectangle})
 
         ## Add contour lines
         self.lines += [Vector((self.left, self.top)), Vector((self.right, self.top)),
                     Vector((self.left, self.bottom)), Vector((self.right, self.bottom)),
                     Vector((self.left, self.top)), Vector((self.left, self.bottom)),
                     Vector((self.right, self.top)), Vector((self.right, self.bottom))]
-
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
         self.batch_lines = batch_for_shader(
             shader, 'LINES', {"pos": self.lines[2:]})
             # shader, 'LINES', {"pos": self.lines[2:] + self.plus_lines}) #Show all '+'
 
-        self.first = True
+    def invoke(self, context, event):
+        self.gpl = context.object.data.layers
+        if not len(self.gpl):
+            self.report({'WARNING'}, "No layer to display")
+            return {'CANCELLED'}
+
+        self.key = event.type
+        self.mouse = self.init_mouse = Vector((event.mouse_region_x, event.mouse_region_y))
+
+        ## Define UI
+        ui_scale = bpy.context.preferences.system.ui_scale
+
+        ## Load texture icons
+        self.icon_tex = {n: self.get_icon(n) for n in ('locked','unlocked', 'hide_off', 'hide_on')}
+        self.icon_size = int(20 * ui_scale)
+        self.icon_tex_coord = (
+            Vector((0, 0)),
+            Vector((self.icon_size, 0)),
+            Vector((self.icon_size, self.icon_size)),
+            Vector((0, self.icon_size))
+            )
+
+        prefs = get_addon_prefs().nav
+        self.px_h = int(prefs.box_height * ui_scale)
+        self.px_w = int(prefs.box_width * ui_scale)
+        self.add_box = int(22 * ui_scale)
+        self.text_size = int(prefs.text_size * ui_scale)
+        self.text_char_limit = round((self.px_w + 10 * ui_scale) / self.text_size)
+        self.left_handed = prefs.left_handed
+        self.icons_margin_a = int(30 * ui_scale)
+        self.icons_margin_b = int(54 * ui_scale)
+        
+        self.opacity_slider_length = int(self.px_w * 72 / 100) # As width's percentage
+        # self.opacity_slider_length = self.px_w # Full width
+
+        self.slider_height = int(self.px_h / 3.7) # Proportional slider
+        # self.slider_height = int(8 * ui_scale) # Fixed size slider
+        ret = self.setup(context)
+        if ret is not None:
+            return ret
+        
+        self.current_area = context.area
+        wm = context.window_manager
+        args = (self, context)
+        
         self.store_settings(context)
 
         self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
@@ -514,6 +507,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         return self.id_from_coord(self.mouse)
 
     def click(self, context):
+        '''Handle click in ui, returning True stop the modal'''
         ## check "add" zone
         if self.add_box_zones[0][0].x <= self.mouse.x <= self.add_box_zones[0][2].x:
             ## if its on a box zone, add layer at this place
@@ -528,7 +522,14 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                         ## bottom layer, need to get down by one
                         # bpy.ops.gpencil.layer_move(type='DOWN')
                         self.gpl.move(nl, type='DOWN')
-                    return True # stop the modal
+                    
+                    # return True # Stop the modal when a new layer is created
+
+                    ## Reset pop-up
+                    new_y = self.init_mouse[1] + self.px_h * (self.ui_idx - self.org_index)
+                    self.init_mouse = Vector((self.init_mouse[0], new_y))
+                    self.setup(context)
+                    return False
 
         ## check hide / lock toggles
         hide_col = lock_col = False
@@ -553,18 +554,18 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
         ## Check if clicked on layer zone and remember which id
 
+        ## With left drag limits
         # if (self.left <= self.mouse.x <= self.right) and (self.bottom <= self.mouse.y <= self.top):
-        ## remove selection limit from left
         if (self.mouse.x <= self.right) and (self.bottom <= self.mouse.y <= self.top):
             ## rename on layer double click
-            # /!\ problem ! 'Y' is still continuously pressed result: yyyyyyyyyyyes !
+            # /!\ problem ! 'Y' is still continuously pressed result: 'yyyyyyyyyyyes' !
             # new_time = time()
             # print('new_time - self.click_time: ', new_time - self.click_time)
             # if new_time - self.click_time < 0.22:
             #     bpy.ops.wm.call_panel(name="GPTB_PT_layer_name_ui", keep_open=False)
             #     return True
+            # self.click_time = time()
 
-            self.click_time = time()
             self.id_src = self.id_from_mouse() # self.ui_idx
             self.click_src = self.mouse.copy()
 

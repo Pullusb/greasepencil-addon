@@ -1,5 +1,9 @@
 # Changelog
 
+1.7.9 - 2023-01-21
+
+- added: layer nav popup stay up when creating a new layer
+
 1.7.8 - 2023-01-21
 
 - changed: layer nav show 'plus' sign only on side of active layer
