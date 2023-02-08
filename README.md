@@ -95,6 +95,23 @@ Straighten the stroke between first ans last point, keeping the points proportio
 You can affect influence in the redo panel (press F9 to pop up the redo panel).  
 Influence amount is remembered for next use (You can shift+click on the button to reset and force the use of 100% influence)
 
+## Timeline Scrub
+
+Call a timeline popup at mouse position to scrub without leaving the 3D viewport.
+
+Default shortcut to call the timeline is Alt + MMB.
+The shortcut enable the scrubbing when hovering timeline editors as well (dopesheet, sequencer, etc).
+
+Scene start/end and keyframes are represented with symbols on the timeline.
+While scrubbing, pressing Ctrl key Snap time cursor on keyframes.
+
+There are several settings to customize visual aspect and behavior in addon preferences:
+
+- "Always Snap" checkbox invert the snapping behavior
+- Special "Rolling" mode is available. It displays keyframes with a constant spacing, discarding timing data when scrubbing back and forth. This is useful for quick flipping between keyframes.
+- Filter to restrict the key display and snapping to Grease Pencil frames only.
+- Change shortcut and choose to propagate it to timeline editors
+- Customizable colors, frame spacing and amount of displayed informations.
 
 ## Layer navigator
 
