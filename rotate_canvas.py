@@ -195,6 +195,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         self.hud = prefs.canvas_use_hud
         self.use_view_center = prefs.canvas_use_view_center
         self.angle = 0.0
+        ## Check if scene camera or local camera exists ?
+        # if (context.space_data.use_local_camera and context.space_data.camera) or context.scene.camera
         self.in_cam = context.region_data.view_perspective == 'CAMERA'
 
         ## store ratio for view rotate correction
@@ -216,7 +218,10 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
         if self.in_cam:
             # Get camera from scene
-            self.cam = bpy.context.scene.camera
+            if context.space_data.use_local_camera and context.space_data.camera:
+                self.cam = context.space_data.camera
+            else:
+                self.cam = context.scene.camera
 
             #return if one element is locked (else bypass location)
             if self.cam.lock_rotation[:] != (False, False, False):

@@ -73,18 +73,19 @@ def draw_callback_px(self, context):
     # restore opengl defaults
     gpu.state.blend_set('NONE')
 
+    text_dpi = int(context.preferences.system.ui_scale * 72)
     # Display current frame text
     blf.color(font_id, *self.color_text)
     if self.use_hud_frame_current:
         blf.position(font_id, self.mouse[0]+10, self.mouse[1]+10, 0)
-        blf.size(font_id, 30, self.dpi)
+        blf.size(font_id, 30, text_dpi)
         blf.draw(font_id, f'{self.new_frame:.0f}')
 
     # Display frame offset text
     if self.use_hud_frame_offset:
         blf.position(font_id, self.mouse[0]+10,
                      self.mouse[1]+(40*self.ui_scale), 0)
-        blf.size(font_id, 16, self.dpi)
+        blf.size(font_id, 16, text_dpi)
         sign = '+' if self.offset > 0 else ''
         blf.draw(font_id, f'{sign}{self.offset:.0f}')
 
@@ -108,7 +109,6 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.always_snap = prefs.always_snap
         self.rolling_mode = prefs.rolling_mode
 
-        self.dpi = context.preferences.system.dpi
         self.ui_scale = context.preferences.system.ui_scale
         # hud prefs
         self.color_timeline = prefs.color_timeline
