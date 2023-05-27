@@ -6,13 +6,11 @@ import bpy
 import math
 import mathutils
 from bpy_extras.view3d_utils import location_3d_to_region_2d
-from bpy.props import BoolProperty, EnumProperty
 from time import time
 ## draw utils
 import gpu
 import blf
 from gpu_extras.batch import batch_for_shader
-from gpu_extras.presets import draw_circle_2d
 
 def step_value(value, step):
     '''return the step closer to the passed value'''
@@ -29,7 +27,7 @@ def draw_callback_px(self, context):
     # 50% alpha, 2 pixel width line
     if context.area != self.current_area:
         return
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     gpu.state.blend_set('ALPHA')
     gpu.state.line_width_set(2.0)
 
@@ -61,7 +59,7 @@ def draw_callback_px(self, context):
     font_id = 0
     ## draw text debug infos
     blf.position(font_id, 15, 30, 0)
-    blf.size(font_id, 20, 72)
+    blf.size(font_id, 20.0)
     blf.draw(font_id, f'angle: {math.degrees(self.angle):.1f}')
 
 
