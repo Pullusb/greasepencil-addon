@@ -1,5 +1,10 @@
 # Changelog
 
+1.8.0 - 2023-05-27
+
+- Changed: `Camera Mirror Flip` allow `assign shortcut` right-click
+- Changed: `Camera Mirror Flip` operator now add an undo group event to avoid unwanted undoing (when mirror is second to last action)
+
 1.7.9 - 2023-01-21
 
 - added: layer nav popup stay up when creating a new layer
