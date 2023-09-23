@@ -19,7 +19,7 @@ Just activate only one of the two otherwise you'll get an error
 
 Add option in Tab Grease Pencil
 
-## Box deform on `Ctrl+T`
+## Box deform on `Ctrl + T`
 
 Example with lattice subdiv and spline deformations.
 

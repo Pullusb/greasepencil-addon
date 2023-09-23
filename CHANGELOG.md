@@ -1,9 +1,15 @@
 # Changelog
 
+1.8.1 - 2023-09-23
+
+- fixed: box deform operator following "context.temp_override" API changes in Blender 4.0
+- changed: If box deform operator is launched through customized shortcut, same shortcut will be used to cancel (Previously cancel was hardcoded to `Ctrl + T`)
+- changed: some operators idname were adjusted to let user access "assign shortcut" from interface
+
 1.8.0 - 2023-05-27
 
-- Changed: `Camera Mirror Flip` allow `assign shortcut` right-click
-- Changed: `Camera Mirror Flip` operator now add an undo group event to avoid unwanted undoing (when mirror is second to last action)
+- changed: `Camera Mirror Flip` allow `assign shortcut` right-click
+- changed: `Camera Mirror Flip` operator now add an undo group event to avoid unwanted undoing (when mirror is second to last action)
 
 1.7.9 - 2023-01-21
 
