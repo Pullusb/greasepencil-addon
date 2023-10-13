@@ -1,5 +1,9 @@
 # Changelog
 
+1.8.2 - 2023-10-13
+
+- fix: layer navigator UI disappearing in 4.0 (area.regions had changed and region.index was hardcoded)
+
 1.8.1 - 2023-09-23
 
 - fixed: box deform operator following "context.temp_override" API changes in Blender 4.0
