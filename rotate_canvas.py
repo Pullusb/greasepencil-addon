@@ -68,7 +68,7 @@ def draw_callback_px(self, context):
 class RC_OT_RotateCanvas(bpy.types.Operator):
     bl_idname = 'view3d.rotate_canvas'
     bl_label = 'Rotate Canvas'
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER"}
 
     def get_center_view(self, context, cam):
         '''
@@ -308,7 +308,7 @@ class RC_OT_Reset_rotation(bpy.types.Operator):
     bl_idname = 'view3d.rotate_canvas_reset'
     bl_label = 'Restore Rotation'
     bl_description = 'Restore active camera rotation from previously saved state'
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
