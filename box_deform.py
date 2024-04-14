@@ -531,7 +531,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
         else:
             self.shortcut_d = {'type': 'T', 'value': 'PRESS', 'ctrl': True,
                 'shift': False, 'alt': False, 'oskey': False}
-        self.shortcut_ui = '+'.join([k.title() for k,v in self.shortcut_d.items() if v is True] + [self.shortcut_d['type']]) 
+        self.shortcut_ui = '+'.join([k.title() for k,v in self.shortcut_d.items() if v is True] + [self.shortcut_d['type']])
 
         ## Restrict to 3D view
         if context.area.type != 'VIEW_3D':
@@ -634,9 +634,11 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
 addon_keymaps = []
 def register_keymaps():
-    addon = bpy.context.window_manager.keyconfigs.addon
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
 
-    km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
+    km = kc.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
     kmi = km.keymap_items.new("view3d.gp_box_deform", type ='T', value = "PRESS", ctrl = True)
     kmi.repeat = False
     addon_keymaps.append((km, kmi))
