@@ -104,12 +104,14 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         update=auto_rebind)
 
     mouse_click : EnumProperty(
-        name="Mouse button", description="click on right/left/middle mouse button in combination with a modifier to trigger alignment",
+        name="Mouse button", description="click on right/left/middle/4/5 mouse button in combination with a modifier to trigger alignment",
         default='MIDDLEMOUSE',
         items=(
             ('RIGHTMOUSE', 'Right click', 'Use click on Right mouse button', 'MOUSE_RMB', 0),
             ('LEFTMOUSE', 'Left click', 'Use click on Left mouse button', 'MOUSE_LMB', 1),
             ('MIDDLEMOUSE', 'Mid click', 'Use click on Mid mouse button', 'MOUSE_MMB', 2),
+            ('BUTTON4MOUSE', 'Mouse Button 4', 'Use click on mouse4 (page back) button', 'LOOP_BACK', 3),
+            ('BUTTON5MOUSE', 'Mouse Button 5', 'Use click on mouse5 (page forward) button', 'LOOP_FORWARDS', 4),
             ),
         update=auto_rebind)
 

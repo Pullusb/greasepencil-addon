@@ -153,7 +153,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
                 rot.rotate_axis("Z", self.angle)
                 context.space_data.region_3d.view_rotation = rot.to_quaternion()
 
-        if event.type in {'RIGHTMOUSE', 'LEFTMOUSE', 'MIDDLEMOUSE'} and event.value == 'RELEASE':
+        if event.type in {'RIGHTMOUSE', 'LEFTMOUSE', 'MIDDLEMOUSE', 'BUTTON4MOUSE', 'BUTTON5MOUSE'} and event.value == 'RELEASE':
             # Trigger reset : Less than 150ms and less than 2 degrees move
             if time() - self.timer < 0.15 and abs(math.degrees(self.angle)) < 2:
                 # self.report({'INFO'}, 'Reset')
