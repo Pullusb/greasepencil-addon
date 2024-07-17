@@ -1,0 +1,22 @@
+# This is so stupid. Extnesions are blender devs inhumanity in man.
+schema_version = "1.0.0"
+
+id = "GreasePencilToolsExtraMouseButtons"
+version = "0.0.4"
+name = "Greasepencil Tools with more mousebutton support"
+tagline = "Addon for blender which adds various buttons from timeline into the dopesheet."
+maintainer = "Splits285 <splits285@gmail.com>"
+type = "add-on"
+
+website = "https://github.com/Splits285/greasepencil-addon-mousebuttonextra"
+tags = ["Grease Pencil"]
+
+blender_version_min = "2.8.0"
+# blender_version_max = "5.1.0"
+
+license = [
+  "Unlicense",
+]
+
+# platforms = ["windows-amd64", "macos-arm64", "linux-x86_64"]
+# Other supported platforms: "windows-arm64", "macos-x86_64"
