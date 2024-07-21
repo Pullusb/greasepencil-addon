@@ -1,5 +1,11 @@
 # Changelog
 
+1.8.5 - 2024-07-21
+
+- added: Mouse button 4 and 5 on rotate canvas choices
+- added: Check of online access permission to allow brush download
+- added: Manifest to match version on extension platform repository
+
 1.8.3 - 2024-04-14
 
 - changed: push undo step manually within rotate canvas only if in camera view

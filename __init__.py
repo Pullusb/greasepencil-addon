@@ -2,15 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+## keep bl_info to allow addon install on previous blender versions
 bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Extra tools for Grease Pencil",
 "author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
-"version": (1, 8, 3),
+"version": (1, 8, 5),
 "blender": (3, 0, 0),
 "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
 "warning": "",
-"doc_url": "{BLENDER_MANUAL_URL}/addons/object/greasepencil_tools.html",
+"doc_url": "https://projects.blender.org/extensions/greasepencil_tools",
 "tracker_url": "https://github.com/Pullusb/greasepencil-addon/issues",
 "category": "Object",
 "support": "COMMUNITY",
