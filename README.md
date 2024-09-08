@@ -8,7 +8,9 @@ Blender addon - Extra tools for Grease Pencil.
 
 ## The latest stable version used on Blender extension platform is hosted on [Blender's gitea repository](https://projects.blender.org/extensions/greasepencil_tools)
 
-**This repository is the developpement version (Usually stable)**
+
+**This repository is the developpement version, currently a work in progress to GPv3 API**
+<!-- **This repository is the developpement version (Usually stable)** -->
 
 
 You can install this version side by side with the extension platform one.

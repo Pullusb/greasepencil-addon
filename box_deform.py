@@ -63,14 +63,14 @@ def view_cage(obj):
     gpl = gp.layers
 
     from_obj = bpy.context.mode == 'OBJECT'
-    all_gps = [o for o in bpy.context.selected_objects if o.type == 'GPENCIL']
+    all_gps = [o for o in bpy.context.selected_objects if o.type == 'GREASEPENCIL']
     other_gp = [o for o in all_gps if o is not obj]
 
     coords = []
     initial_mode = bpy.context.mode
 
     ## get points
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         for l in gpl:
             if l.lock or l.hide or not l.active_frame:#or len(l.frames)
                 continue
@@ -97,7 +97,7 @@ def view_cage(obj):
                     for p in s.points:
                         coords.append(gpo.matrix_world @ p.co)
 
-    elif bpy.context.mode == 'PAINT_GPENCIL':
+    elif bpy.context.mode == 'PAINT_GREASE_PENCIL':
         # get last stroke points coordinated
         if not gpl.active or not gpl.active.active_frame:
             return 'No frame to deform'
@@ -117,16 +117,16 @@ def view_cage(obj):
         ## maybe silent return instead (need special str code to manage errorless return)
         return 'No points found!'
 
-    if bpy.context.mode in ('EDIT_GPENCIL', 'PAINT_GPENCIL') and len(coords) < 2:
+    if bpy.context.mode in ('EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL') and len(coords) < 2:
         # Dont block object mod
         return 'Less than two point selected'
 
     vg_name = 'lattice_cage_deform_group'
 
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         vg = assign_vg(obj, vg_name)
 
-    if bpy.context.mode == 'PAINT_GPENCIL':
+    if bpy.context.mode == 'PAINT_GREASE_PENCIL':
         # points cannot be assign to API yet(ugly and slow workaround but only way)
         # -> https://developer.blender.org/T56280 so, hop'in'ops !
 
@@ -144,7 +144,7 @@ def view_cage(obj):
             p.select = True
 
         # assign
-        bpy.ops.object.mode_set(mode='EDIT_GPENCIL')
+        bpy.ops.object.mode_set(mode='EDIT_GREASE_PENCIL')
         vg = assign_vg(obj, vg_name)
 
         # restore
@@ -246,12 +246,12 @@ def view_cage(obj):
         for m in mods:
             m.object = cage
 
-    if initial_mode == 'PAINT_GPENCIL':
+    if initial_mode == 'PAINT_GREASE_PENCIL':
         mod.layer = gpl.active.info
 
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         mod.vertex_group = vg.name
 
     # Go in object mode if not already
@@ -341,7 +341,7 @@ class VIEW3D_OT_gp_box_deform(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in ('GPENCIL','LATTICE')
+        return context.object is not None and context.object.type in ('GREASEPENCIL','LATTICE')
 
     # local variable
     tab_press_ct = 0
@@ -554,7 +554,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
-        self.gp_mode = 'EDIT_GPENCIL'
+        self.gp_mode = 'EDIT_GREASE_PENCIL'
 
         # --- special Case of lattice revive modal, just after ctrl+Z back into lattice with modal stopped
         if context.mode == 'EDIT_LATTICE' and context.object.name == 'lattice_cage_deform' and len(context.object.vertex_groups):
@@ -575,12 +575,12 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
 
-        if context.object.type != 'GPENCIL':
+        if context.object.type != 'GREASEPENCIL':
             # self.report({'ERROR'}, "Works only on gpencil objects")
             ## silent return
             return {'CANCELLED'}
 
-        if context.mode not in ('EDIT_GPENCIL', 'OBJECT', 'PAINT_GPENCIL'):
+        if context.mode not in ('EDIT_GREASE_PENCIL', 'OBJECT', 'PAINT_GREASE_PENCIL'):
             # self.report({'WARNING'}, "Works only in following GPencil modes: object / edit/ paint")# ERROR
             ## silent return
             return {'CANCELLED'}
@@ -594,7 +594,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
         self.from_object = context.mode == 'OBJECT'
         self.all_gps = self.other_gp = []
         if self.from_object:
-            self.all_gps = [o for o in bpy.context.selected_objects if o.type == 'GPENCIL']
+            self.all_gps = [o for o in bpy.context.selected_objects if o.type == 'GREASEPENCIL']
             self.other_gp = [o for o in self.all_gps if o is not self.gp_obj]
 
         # Clean potential failed previous job (delete tmp lattice)

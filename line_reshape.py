@@ -103,8 +103,8 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None and context.object.type == 'GPENCIL'
-        #and context.mode in ('PAINT_GPENCIL', 'EDIT_GPENCIL')
+        return context.active_object is not None and context.object.type == 'GREASEPENCIL'
+        #and context.mode in ('PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL')
 
     influence_val : bpy.props.FloatProperty(name="Straight force", description="Straight interpolation percentage",
     default=100, min=0, max=100, step=2, precision=1, subtype='PERCENTAGE', unit='NONE')
@@ -115,7 +115,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
         if not gpl:
             return {"CANCELLED"}
 
-        if context.mode == 'PAINT_GPENCIL':
+        if context.mode == 'PAINT_GREASE_PENCIL':
             if not gpl.active or not gpl.active.active_frame:
                 self.report({'ERROR'}, 'No Grease pencil frame found')
                 return {"CANCELLED"}
@@ -127,7 +127,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
             s = gpl.active.active_frame.strokes[get_last_index(context)]
             to_straight_line(s, keep_points=True, influence=self.influence_val)
 
-        elif context.mode == 'EDIT_GPENCIL':
+        elif context.mode == 'EDIT_GREASE_PENCIL':
             ct = 0
             for l in gpl:
                 if l.lock or l.hide or not l.active_frame:
@@ -149,9 +149,9 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
                 return {"CANCELLED"}
 
         ## filter method
-        # if context.mode == 'PAINT_GPENCIL':
+        # if context.mode == 'PAINT_GREASE_PENCIL':
         #     L, F, S = 'ACTIVE', 'ACTIVE', 'LAST'
-        # elif context.mode == 'EDIT_GPENCIL'
+        # elif context.mode == 'EDIT_GREASE_PENCIL'
         #     L, F, S = 'ALL', 'ACTIVE', 'SELECT'
         #     if gp.use_multiedit: F = 'SELECT'
         # else : return {"CANCELLED"}
@@ -165,7 +165,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
         layout.prop(self, "influence_val")
 
     def invoke(self, context, event):
-        if context.mode not in ('PAINT_GPENCIL', 'EDIT_GPENCIL'):
+        if context.mode not in ('PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL'):
             return {"CANCELLED"}
         if event.shift:
             self.influence_val = 100

@@ -1,5 +1,9 @@
 # Changelog
 
+2.0.0 - 2024-09-09
+
+- Start update to GPv3 API for Blender 4.3 (Broken)
+
 1.8.5 - 2024-07-21
 
 - added: Mouse button 4 and 5 on rotate canvas choices

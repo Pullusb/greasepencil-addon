@@ -156,7 +156,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             ob = None  # do not consider any key
 
         if ob:  # condition to allow empty scrubing
-            if ob.type != 'GPENCIL' or self.evaluate_gp_obj_key:
+            if ob.type != 'GREASEPENCIL' or self.evaluate_gp_obj_key:
                 # Get object keyframe position
                 anim_data = ob.animation_data
                 action = None
@@ -169,7 +169,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
                             if kf.co.x not in self.pos:
                                 self.pos.append(kf.co.x)
 
-            if ob.type == 'GPENCIL':
+            if ob.type == 'GREASEPENCIL':
                 # Get GP frame position
                 gpl = ob.data.layers
                 layer = gpl.active
@@ -207,11 +207,11 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.active_space_data = context.space_data
         self.onion_skin = None
         self.multi_frame = None
-        if context.space_data.type == 'VIEW_3D':  # and 'GPENCIL' in context.mode
+        if context.space_data.type == 'VIEW_3D':  # and 'GREASEPENCIL' in context.mode
             self.onion_skin = self.active_space_data.overlay.use_gpencil_onion_skin
             self.active_space_data.overlay.use_gpencil_onion_skin = False
 
-        if ob and ob.type == 'GPENCIL':
+        if ob and ob.type == 'GREASEPENCIL':
             if ob.data.use_multiedit:
                 self.multi_frame = ob.data.use_multiedit
                 ob.data.use_multiedit = False

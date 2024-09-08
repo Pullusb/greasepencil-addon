@@ -266,7 +266,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type == 'GPENCIL'
+        return context.object is not None and context.object.type == 'GREASEPENCIL'
 
     lapse = 0
     text = ''
