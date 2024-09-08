@@ -232,10 +232,10 @@ def draw_callback_px(self, context):
         #     blf.position(font_id, self.text_x+1, self.text_pos[i]-1, 0)
         #     blf.size(font_id, self.text_size)
         #     blf.color(font_id, *self.active_layer_color)
-        #     blf.draw(font_id, l.info)
+        #     blf.draw(font_id, l.name)
         if l.hide:
             color = self.hided_layer_color
-        elif not len(l.frames) or (len(l.frames) == 1 and not len(l.frames[0].strokes)):
+        elif not len(l.frames) or (len(l.frames) == 1 and not len(l.frames[0].drawing.strokes)):
             # Show darker color if is empty if layer is empty (or has one empty keyframe)
             color = self.empty_layer_color
         else:
@@ -244,7 +244,7 @@ def draw_callback_px(self, context):
         blf.position(font_id, self.text_x, self.text_pos[i], 0)
         blf.size(font_id, self.text_size)
         blf.color(font_id, *color)
-        display_name = l.info if len(l.info) <= self.text_char_limit else l.info[:self.text_char_limit-3] + '...'
+        display_name = l.name if len(l.name) <= self.text_char_limit else l.name[:self.text_char_limit-3] + '...'
         blf.draw(font_id, display_name)
 
     ## Drag text
@@ -302,7 +302,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         #     # Needed if delete is implemented
         #     return {'CANCELLED'}
 
-        self.layer_list = [(l.info, l) for l in self.gpl]
+        self.layer_list = [(l.name, l) for l in self.gpl]
         self.ui_idx = self.org_index = context.object.data.layers.active_index
         self.id_num = len(self.layer_list)
         self.dragging = False
@@ -363,7 +363,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             y_coord = self.bottom + (i * self.px_h)
             self.lines += [(self.left, y_coord), (self.right, y_coord)]
 
-            # self.texts.append((self.gpl[i].info, self.text_bottom + (i * self.px_h)))
+            # self.texts.append((self.gpl[i].name, self.text_bottom + (i * self.px_h)))
             self.text_pos.append(self.text_bottom + (i * self.px_h))
 
             ## define index ranges
@@ -581,7 +581,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 self.org_opacity = self.gpl[self.id_src].opacity
             else:
                 ## on layer
-                self.drag_text = self.gpl[self.id_src].info
+                self.drag_text = self.gpl[self.id_src].name
                 self.drag_mode = 'layer'
         return False
 

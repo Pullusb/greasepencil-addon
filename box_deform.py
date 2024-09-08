@@ -20,7 +20,7 @@ def region_to_location(viewcoords, depthcoords):
 def store_cage(self, vg_name):
     import time
     unique_id = time.strftime(r'%y%m%d%H%M%S') # ex: 20210711111117
-    # name = f'gp_lattice_{unique_id}'
+    # name = f'GREASE_PENCIL_LATTICE_{unique_id}'
     name = f'{self.gp_obj.name}_lat{unique_id}'
     vg = self.gp_obj.vertex_groups.get(vg_name)
     if vg:
@@ -32,12 +32,12 @@ def store_cage(self, vg_name):
 
     self.cage.name = name
     self.cage.data.name = name
-    mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    mod = self.gp_obj.modifiers.get('tmp_lattice')
     if mod:
         mod.name = name #f'Lattice_{unique_id}'
         mod.vertex_group = name
     for o in self.other_gp:
-        mod = o.grease_pencil_modifiers.get('tmp_lattice')
+        mod = o.modifiers.get('tmp_lattice')
         if mod:
             mod.name = name
             mod.vertex_group = name
@@ -72,43 +72,43 @@ def view_cage(obj):
     ## get points
     if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         for l in gpl:
-            if l.lock or l.hide or not l.active_frame:#or len(l.frames)
+            if l.lock or l.hide or not l.current_frame():#or len(l.frames)
                 continue
             if gp.use_multiedit:
                 target_frames = [f for f in l.frames if f.select]
             else:
-                target_frames = [l.active_frame]
+                target_frames = [l.current_frame()]
 
             for f in target_frames:
-                for s in f.strokes:
+                for s in f.drawing.strokes:
                     if not s.select:
                         continue
                     for p in s.points:
                         if p.select:
                             # get real location
-                            coords.append(obj.matrix_world @ p.co)
+                            coords.append(obj.matrix_world @ p.position)
 
     elif bpy.context.mode == 'OBJECT': # object mode -> all points of all selected gp objects
         for gpo in all_gps:
             for l in gpo.data.layers:# if l.hide:continue# only visible ? (might break things)
                 if not len(l.frames):
                     continue # skip frameless layer
-                for s in l.active_frame.strokes:
+                for s in l.current_frame().drawing.strokes:
                     for p in s.points:
-                        coords.append(gpo.matrix_world @ p.co)
+                        coords.append(gpo.matrix_world @ p.position)
 
     elif bpy.context.mode == 'PAINT_GREASE_PENCIL':
         # get last stroke points coordinated
-        if not gpl.active or not gpl.active.active_frame:
+        if not gpl.active or not gpl.active.current_frame():
             return 'No frame to deform'
 
-        if not len(gpl.active.active_frame.strokes):
+        if not len(gpl.active.current_frame().drawing.strokes):
             return 'No stroke found to deform'
 
         paint_id = -1
         if bpy.context.scene.tool_settings.use_gpencil_draw_onback:
             paint_id = 0
-        coords = [obj.matrix_world @ p.co for p in gpl.active.active_frame.strokes[paint_id].points]
+        coords = [obj.matrix_world @ p.position for p in gpl.active.current_frame().drawing.strokes[paint_id].points]
 
     else:
         return 'Wrong mode!'
@@ -132,15 +132,15 @@ def view_cage(obj):
 
         # store selection and deselect all
         plist = []
-        for s in gpl.active.active_frame.strokes:
+        for s in gpl.active.current_frame().drawing.strokes:
             for p in s.points:
                 plist.append([p, p.select])
                 p.select = False
 
         # select
         ## foreach_set does not update
-        # gpl.active.active_frame.strokes[paint_id].points.foreach_set('select', [True]*len(gpl.active.active_frame.strokes[paint_id].points))
-        for p in gpl.active.active_frame.strokes[paint_id].points:
+        # gpl.active.current_frame().drawing.strokes[paint_id].points.foreach_set('select', [True]*len(gpl.active.current_frame().drawing.strokes[paint_id].points))
+        for p in gpl.active.current_frame().drawing.strokes[paint_id].points:
             p.select = True
 
         # assign
@@ -225,18 +225,18 @@ def view_cage(obj):
     lattice.interpolation_type_v = lattice_interp
     lattice.interpolation_type_w = lattice_interp
 
-    mod = obj.grease_pencil_modifiers.new('tmp_lattice', 'GP_LATTICE')
+    mod = obj.modifiers.new('tmp_lattice', 'GREASE_PENCIL_LATTICE')
     if from_obj:
         mods = []
         for o in other_gp:
-            mods.append( o.grease_pencil_modifiers.new('tmp_lattice', 'GP_LATTICE') )
+            mods.append( o.modifiers.new('tmp_lattice', 'GREASE_PENCIL_LATTICE') )
 
     # move to top if modifiers exists
-    for _ in range(len(obj.grease_pencil_modifiers)):
+    for _ in range(len(obj.modifiers)):
         bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
     if from_obj:
         for o in other_gp:
-            for _ in range(len(o.grease_pencil_modifiers)):
+            for _ in range(len(o.modifiers)):
                 context_override = {'object': o}
                 with bpy.context.temp_override(**context_override):
                     bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
@@ -247,7 +247,7 @@ def view_cage(obj):
             m.object = cage
 
     if initial_mode == 'PAINT_GREASE_PENCIL':
-        mod.layer = gpl.active.info
+        mod.layer = gpl.active.name
 
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
@@ -293,7 +293,7 @@ def delete_cage(cage):
     bpy.data.lattices.remove(lattice)
 
 def apply_cage(gp_obj, context):
-    mod = gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    mod = gp_obj.modifiers.get('tmp_lattice')
     multi_user = None
     if mod:
         if gp_obj.data.users > 1:
@@ -316,16 +316,16 @@ def apply_cage(gp_obj, context):
 
 def cancel_cage(self):
     #remove modifier
-    mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    mod = self.gp_obj.modifiers.get('tmp_lattice')
     if mod:
-        self.gp_obj.grease_pencil_modifiers.remove(mod)
+        self.gp_obj.modifiers.remove(mod)
     else:
         print(f'tmp_lattice modifier not found to remove on {self.gp_obj.name}')
 
     for ob in self.other_gp:
-        mod = ob.grease_pencil_modifiers.get('tmp_lattice')
+        mod = ob.modifiers.get('tmp_lattice')
         if mod:
-            ob.grease_pencil_modifiers.remove(mod)
+            ob.modifiers.remove(mod)
         else:
             print(f'tmp_lattice modifier not found to remove on {ob.name}')
 
@@ -562,7 +562,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             if not self.gp_obj:
                 self.report({'ERROR'}, "/!\\ Box Deform : Cannot find object to target")
                 return {'CANCELLED'}
-            if not self.gp_obj.grease_pencil_modifiers.get('tmp_lattice'):
+            if not self.gp_obj.modifiers.get('tmp_lattice'):
                 self.report({'ERROR'}, "/!\\ No 'tmp_lattice' modifiers on GP object")
                 return {'CANCELLED'}
             self.cage = context.object
@@ -598,10 +598,10 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             self.other_gp = [o for o in self.all_gps if o is not self.gp_obj]
 
         # Clean potential failed previous job (delete tmp lattice)
-        mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+        mod = self.gp_obj.modifiers.get('tmp_lattice')
         if mod:
             print('Deleted remaining lattice modifiers')
-            self.gp_obj.grease_pencil_modifiers.remove(mod)
+            self.gp_obj.modifiers.remove(mod)
 
         phantom_obj = context.scene.objects.get('lattice_cage_deform')
         if phantom_obj:
@@ -609,7 +609,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             delete_cage(phantom_obj)
 
         if bpy.app.version < (2,93,0):
-            if [m for m in self.gp_obj.grease_pencil_modifiers if m.type == 'GP_LATTICE']:
+            if [m for m in self.gp_obj.modifiers if m.type == 'GREASE_PENCIL_LATTICE']:
                 self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (multi-lattices are enabled in blender 2.93+)")
                 return {'CANCELLED'}
 
