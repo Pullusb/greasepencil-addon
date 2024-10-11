@@ -8,7 +8,7 @@ bl_info = {
 "description": "Extra tools for Grease Pencil",
 "author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
 "version": (2, 0, 0),
-"blender": (3, 0, 0),
+"blender": (4, 3, 0),
 "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
 "warning": "",
 "doc_url": "https://projects.blender.org/extensions/greasepencil_tools",
@@ -25,7 +25,6 @@ from .  import (prefs,
                 layer_navigator,
                 timeline_scrub,
                 draw_tools,
-                import_brush_pack,
                 ui_panels,
                 )
 
@@ -37,7 +36,6 @@ modules = (
     layer_navigator,
     timeline_scrub,
     draw_tools,
-    import_brush_pack,
     ui_panels,
 )
 
