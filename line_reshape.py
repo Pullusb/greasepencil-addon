@@ -133,7 +133,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
                 if l.lock or l.hide or not l.current_frame():
                     # avoid locked, hidden, empty layers
                     continue
-                if gp.use_multiedit:
+                if context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
                     target_frames = [f for f in l.frames if f.select]
                 else:
                     target_frames = [l.current_frame()]
@@ -153,7 +153,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
         #     L, F, S = 'ACTIVE', 'ACTIVE', 'LAST'
         # elif context.mode == 'EDIT_GREASE_PENCIL'
         #     L, F, S = 'ALL', 'ACTIVE', 'SELECT'
-        #     if gp.use_multiedit: F = 'SELECT'
+        #     if context.scene.tool_settings.use_grease_pencil_multi_frame_editing: F = 'SELECT'
         # else : return {"CANCELLED"}
         # for s in strokelist(t_layer=L, t_frame=F, t_stroke=S):
         #     to_straight_line(s, keep_points=True, influence = self.influence_val)#, straight_pressure=True

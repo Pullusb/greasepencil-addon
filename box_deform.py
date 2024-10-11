@@ -52,7 +52,7 @@ def assign_vg(obj, vg_name, delete=False):
         return
 
     vg = obj.vertex_groups.new(name=vg_name)
-    bpy.ops.gpencil.vertex_group_assign()
+    bpy.ops.object.vertex_group_assign()
     return vg
 
 def view_cage(obj):
@@ -74,7 +74,7 @@ def view_cage(obj):
         for l in gpl:
             if l.lock or l.hide or not l.current_frame():#or len(l.frames)
                 continue
-            if gp.use_multiedit:
+            if bpy.context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
                 target_frames = [f for f in l.frames if f.select]
             else:
                 target_frames = [l.current_frame()]
@@ -144,7 +144,7 @@ def view_cage(obj):
             p.select = True
 
         # assign
-        bpy.ops.object.mode_set(mode='EDIT_GREASE_PENCIL')
+        bpy.ops.object.mode_set(mode='EDIT') # EDIT_GREASE_PENCIL
         vg = assign_vg(obj, vg_name)
 
         # restore
@@ -231,15 +231,22 @@ def view_cage(obj):
         for o in other_gp:
             mods.append( o.modifiers.new('tmp_lattice', 'GREASE_PENCIL_LATTICE') )
 
-    # move to top if modifiers exists
-    for _ in range(len(obj.modifiers)):
-        bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
+    ## move to top if modifiers exists
+    # for _ in range(len(obj.modifiers)):
+    #     bpy.ops.object.modifier_move_up(modifier='tmp_lattice')
+    # if from_obj:
+    #     for o in other_gp:
+    #         for _ in range(len(o.modifiers)):
+    #             context_override = {'object': o}
+    #             with bpy.context.temp_override(**context_override):
+    #                 bpy.ops.object.modifier_move_up(modifier='tmp_lattice')
+    ## new version using move to index
+    bpy.ops.object.modifier_move_to_index(modifier='tmp_lattice', index=0)
     if from_obj:
         for o in other_gp:
-            for _ in range(len(o.modifiers)):
-                context_override = {'object': o}
-                with bpy.context.temp_override(**context_override):
-                    bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
+            context_override = {'object': o}
+            with bpy.context.temp_override(**context_override):
+                bpy.ops.object.modifier_move_to_index(modifier='tmp_lattice', index=0)
 
     mod.object = cage
     if from_obj:
@@ -303,7 +310,7 @@ def apply_cage(gp_obj, context):
             gp_obj.data = gp_obj.data.copy()
 
         with context.temp_override(object=gp_obj):
-            bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
+            bpy.ops.object.modifier_apply(modifier=mod.name) # arg from GPv2: apply_as='DATA',
 
         if multi_user:
             for o in other_user: # relink
