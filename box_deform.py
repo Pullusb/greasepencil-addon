@@ -20,7 +20,6 @@ def region_to_location(viewcoords, depthcoords):
 def store_cage(self, vg_name):
     import time
     unique_id = time.strftime(r'%y%m%d%H%M%S') # ex: 20210711111117
-    # name = f'GREASE_PENCIL_LATTICE_{unique_id}'
     name = f'{self.gp_obj.name}_lat{unique_id}'
     vg = self.gp_obj.vertex_groups.get(vg_name)
     if vg:
@@ -35,12 +34,13 @@ def store_cage(self, vg_name):
     mod = self.gp_obj.modifiers.get('tmp_lattice')
     if mod:
         mod.name = name #f'Lattice_{unique_id}'
-        mod.vertex_group = name
+        # mod.vertex_group_name = name # automatic updated since 4.3
+    # return    
     for o in self.other_gp:
         mod = o.modifiers.get('tmp_lattice')
         if mod:
             mod.name = name
-            mod.vertex_group = name
+            # mod.vertex_group_name = name # automatic updated since 4.3
 
 def assign_vg(obj, vg_name, delete=False):
     ## create vertex group
@@ -259,7 +259,7 @@ def view_cage(obj):
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
     if bpy.context.mode == 'EDIT_GREASE_PENCIL':
-        mod.vertex_group = vg.name
+        mod.vertex_group_name = vg.name
 
     # Go in object mode if not already
     if bpy.context.mode != 'OBJECT':
@@ -561,7 +561,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
-        self.gp_mode = 'EDIT_GREASE_PENCIL'
+        # self.gp_mode = 'EDIT_GREASE_PENCIL'
 
         # --- special Case of lattice revive modal, just after ctrl+Z back into lattice with modal stopped
         if context.mode == 'EDIT_LATTICE' and context.object.name == 'lattice_cage_deform' and len(context.object.vertex_groups):
@@ -615,12 +615,10 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             print('Deleted remaining lattice object')
             delete_cage(phantom_obj)
 
-        if bpy.app.version < (2,93,0):
-            if [m for m in self.gp_obj.modifiers if m.type == 'GREASE_PENCIL_LATTICE']:
-                self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (multi-lattices are enabled in blender 2.93+)")
-                return {'CANCELLED'}
-
         self.gp_mode = context.mode # store mode for restore
+        if self.gp_mode == 'EDIT_GREASE_PENCIL':
+            ## `mode_set`` name is not the same as context.mode
+            self.gp_mode = 'EDIT'
 
         # All good, create lattice and start modal
 
