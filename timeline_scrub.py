@@ -172,6 +172,13 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             if ob.type == 'GREASEPENCIL':
                 # Get GP frame position
                 gpl = ob.data.layers
+                if group := context.grease_pencil.layer_groups.active:
+                    ## group is active (no active layer) -> consider keys of all layer in groups
+                    group_frames = [f.frame_number for l in gpl for f in l.frames if l.parent_group == group]
+                    if group_frames:
+                        self.pos += sorted(set(group_frames))
+                    ## Consider all frame if layer is empty ?
+
                 layer = gpl.active
                 if layer:
                     for frame in layer.frames:
@@ -212,9 +219,9 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             self.active_space_data.overlay.use_gpencil_onion_skin = False
 
         if ob and ob.type == 'GREASEPENCIL':
-            if ob.data.use_multiedit:
-                self.multi_frame = ob.data.use_multiedit
-                ob.data.use_multiedit = False
+            if context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
+                self.multi_frame = context.scene.tool_settings.use_grease_pencil_multi_frame_editing
+                context.scene.tool_settings.use_grease_pencil_multi_frame_editing = False
 
         self.hud = prefs.use_hud
         if not self.hud:
@@ -387,7 +394,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         if self.onion_skin is not None:
             self.active_space_data.overlay.use_gpencil_onion_skin = self.onion_skin
         if self.multi_frame:
-            context.object.data.use_multiedit = self.multi_frame
+            context.scene.tool_settings.use_grease_pencil_multi_frame_editing = self.multi_frame
         if self.hud and self.viewtype:
             self.viewtype.draw_handler_remove(self._handle, self.spacetype)
             context.area.tag_redraw()
