@@ -188,10 +188,11 @@ def draw_callback_px(self, context):
     self.batch_lines.draw(shader)
 
     ## "Plus" lines
-    if self.gpl.active_index == 0:
+    active_index = layer_active_index(self.gpl)
+    if active_index == 0:
         plus_lines = self.plus_lines[:8]
     else:
-        plus_lines = self.plus_lines[self.gpl.active_index * 4 + 4:self.gpl.active_index * 4 + 8]
+        plus_lines = self.plus_lines[active_index * 4 + 4:active_index * 4 + 8]
     batch_plus = batch_for_shader(
         shader, 'LINES', {"pos": plus_lines})
     batch_plus.draw(shader)
@@ -258,6 +259,9 @@ def draw_callback_px(self, context):
             blf.draw(font_id, self.drag_text)
 
 
+def layer_active_index(gpl):
+    return next((i for i, l in enumerate(gpl) if l == gpl.active), None)
+
 class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_idname = "gpencil.viewport_layer_nav_osd"
     bl_label = "GP Layer Navigator Pop up"
@@ -303,7 +307,19 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         #     return {'CANCELLED'}
 
         self.layer_list = [(l.name, l) for l in self.gpl]
-        self.ui_idx = self.org_index = context.object.data.layers.active_index
+        if active_grp := context.grease_pencil.layer_groups.active:
+            ## find uppermost layer related to group and set as active
+            last_layer = None
+            for l in context.grease_pencil.layers:
+                if l.parent_group == active_grp:
+                    last_layer = l
+            if last_layer is None:
+                last_layer = context.grease_pencil.layers[-1]
+
+            ## Set active layer
+            context.object.data.layers.active = last_layer
+
+        self.ui_idx = self.org_index = layer_active_index(self.gpl)
         self.id_num = len(self.layer_list)
         self.dragging = False
         self.drag_mode = None
@@ -520,7 +536,8 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 if zone[0].y <= self.mouse.y <= zone[2].y:
                     # add layer
                     nl = context.object.data.layers.new('GP_Layer')
-                    nl.frames.new(context.scene.frame_current, active=True)
+                    context.object.data.layers.update()
+                    nl.frames.new(context.scene.frame_current) # , active=True
                     nl.use_lights = False
                     if i == 0:
                         ## bottom layer, need to get down by one
@@ -588,11 +605,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
         self.mouse = Vector((event.mouse_region_x, event.mouse_region_y))
-        current_idx = context.object.data.layers.active_index
+        current_idx = layer_active_index(context.object.data.layers)
 
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             self.stop_mod(context)
-            context.object.data.layers.active_index = self.org_index
+            context.object.data.layers.active = self.gpl[self.org_index]
             return {'CANCELLED'}
 
         if event.type == self.key and event.value == 'RELEASE':
@@ -671,7 +688,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         if self.ui_idx == current_idx:
             return {'RUNNING_MODAL'}
         else:
-            context.object.data.layers.active_index = self.ui_idx
+            context.object.data.layers.active = self.gpl[self.ui_idx]
             if self.drag_mode:
                 ## maybe add a self.state value ?
                 if self.drag_mode == 'hide' and not self.gpl[self.ui_idx].hide:
