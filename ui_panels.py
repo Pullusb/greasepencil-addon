@@ -45,14 +45,12 @@ def menu_boxdeform_entry(self, context):
     """Transform shortcut to append in existing menu"""
     layout = self.layout
     obj = bpy.context.object
-    # {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL','SCULPT_GREASE_PENCIL','WEIGHT_GREASE_PENCIL', 'VERTEX_GPENCIL'}
     if obj and obj.type == 'GREASEPENCIL' and context.mode in {'OBJECT', 'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('view3d.gp_box_deform', text='Box Deform')
 
 def menu_stroke_entry(self, context):
     layout = self.layout
-    # Gpencil modes : {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL','SCULPT_GREASE_PENCIL','WEIGHT_GREASE_PENCIL', 'VERTEX_GPENCIL'}
     if context.mode in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('gpencil.straight_stroke', text='Straight Stroke')

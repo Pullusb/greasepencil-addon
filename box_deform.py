@@ -34,13 +34,13 @@ def store_cage(self, vg_name):
     mod = self.gp_obj.modifiers.get('tmp_lattice')
     if mod:
         mod.name = name #f'Lattice_{unique_id}'
-        # mod.vertex_group_name = name # automatic updated since 4.3
+        mod.vertex_group_name = name
     # return    
     for o in self.other_gp:
         mod = o.modifiers.get('tmp_lattice')
         if mod:
             mod.name = name
-            # mod.vertex_group_name = name # automatic updated since 4.3
+            mod.vertex_group_name = name
 
 def assign_vg(obj, vg_name, delete=False):
     ## create vertex group
@@ -561,7 +561,9 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
-        # self.gp_mode = 'EDIT_GREASE_PENCIL'
+        # pre-set EDIT mode here in case of Modal revive
+        self.gp_mode = 'EDIT'
+        self.other_gp = []
 
         # --- special Case of lattice revive modal, just after ctrl+Z back into lattice with modal stopped
         if context.mode == 'EDIT_LATTICE' and context.object.name == 'lattice_cage_deform' and len(context.object.vertex_groups):
