@@ -2,15 +2,14 @@
 
 Blender addon - Extra tools for Grease Pencil.
 
-## Note : [This addon is available in the extension platform](https://extensions.blender.org/add-ons/grease-pencil-tools/) since Blender 4.2.
+**This repository is the developpement version**
+
+### Note : [This addon is available in the extension platform](https://extensions.blender.org/add-ons/grease-pencil-tools/) since Blender 4.2.
+
+
+### The latest stable version used on Blender extension platform is hosted on [Blender's gitea repository](https://projects.blender.org/extensions/greasepencil_tools)
 
 > (the addon was bundled in Blender from version 2.91 to 4.1).
-
-## The latest stable version used on Blender extension platform is hosted on [Blender's gitea repository](https://projects.blender.org/extensions/greasepencil_tools)
-
-
-**This repository is the developpement version, currently a work in progress to GPv3 API**
-<!-- **This repository is the developpement version (Usually stable)** -->
 
 
 You can install this version side by side with the extension platform one.

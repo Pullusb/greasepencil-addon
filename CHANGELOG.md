@@ -1,8 +1,8 @@
 # Changelog
 
-2.0.0 - 2024-09-09
+2.0.0 - 2024-10-18
 
-- Start update to GPv3 API for Blender 4.3 (Broken)
+- Update to GPv3 API for Blender 4.3
 
 1.8.5 - 2024-07-21
 

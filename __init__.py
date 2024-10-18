@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-## keep bl_info to allow addon install on previous blender versions
+## Keep bl_info for now to attach editor debugger
 bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Extra tools for Grease Pencil",
