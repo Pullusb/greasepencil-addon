@@ -1,8 +1,9 @@
 # Changelog
 
-2.0.0 - 2024-10-18
+2.0.0 - 2024-10-22
 
-- Update to GPv3 API for Blender 4.3
+- changed: Update to GPv3 API for Blender 4.3
+- changed: licence gpl-v2.0 to gpl-v3.0
 
 1.8.5 - 2024-07-21
 
