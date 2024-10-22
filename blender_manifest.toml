@@ -7,7 +7,7 @@ maintainer = "Samuel Bernou"
 type = "add-on"
 tags = ["Grease Pencil", "Object"]
 blender_version_min = "4.3.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/greasepencil_tools"
 copyright = ["2024 Samuel Bernou", "2024 Antonio Vazquez", "2024 Daniel Martinez Lara", "2024 Matias Mendiola"]
 
