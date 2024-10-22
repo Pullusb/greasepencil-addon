@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "grease_pencil_tools"
 name = "Grease Pencil Tools"
-version = "1.8.5"
+version = "2.0.0"
 tagline = "Extra tools for Grease Pencil"
 maintainer = "Samuel Bernou"
 type = "add-on"
