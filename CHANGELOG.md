@@ -1,5 +1,10 @@
 # Changelog
 
+2.0.1 - 2024-11-02
+
+- fixed: error using box deform in draw mode (when used on last painted stroke)
+- removed: bl_info from `__init__` file
+
 2.0.0 - 2024-10-22
 
 - changed: Update to GPv3 API for Blender 4.3
