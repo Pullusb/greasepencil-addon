@@ -1,5 +1,12 @@
 # Changelog
 
+2.0.2 - 2024-11-03
+- added: Layer navigator group support:
+  - add to group
+  - drag and drop to move in/out of groups
+  - display group boundaries with a dashed line
+  - consider nested lock and hide state
+
 2.0.1 - 2024-11-02
 
 - fixed: error using box deform in draw mode (when used on last painted stroke)
