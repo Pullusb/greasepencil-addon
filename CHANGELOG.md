@@ -1,5 +1,9 @@
 # Changelog
 
+2.1.0 - 2025-05-11
+
+- added: `Hide overlays` preference option for timeline scrub (Disabled by default)
+
 2.0.2 - 2024-11-03
 - added: Layer navigator group support:
   - add to group

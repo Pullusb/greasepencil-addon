@@ -109,6 +109,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.evaluate_gp_obj_key = prefs.evaluate_gp_obj_key
         self.always_snap = prefs.always_snap
         self.rolling_mode = prefs.rolling_mode
+        self.hide_overlays = prefs.hide_overlays
 
         self.dpi = context.preferences.system.dpi
         self.ui_scale = context.preferences.system.ui_scale
@@ -210,13 +211,23 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         # Also snap on play bounds (sliced off for keyframe display)
         self.pos += [self.f_start, self.f_end]
 
-        # Disable Onion skin
+        # Disable Onion skin and other overlays
         self.active_space_data = context.space_data
         self.onion_skin = None
+        self.show_overlays = None
+        self.show_gizmo = None
         self.multi_frame = None
-        if context.space_data.type == 'VIEW_3D':  # and 'GREASEPENCIL' in context.mode
+        if context.space_data.type == 'VIEW_3D':
             self.onion_skin = self.active_space_data.overlay.use_gpencil_onion_skin
             self.active_space_data.overlay.use_gpencil_onion_skin = False
+
+            if self.hide_overlays:
+                # Store overlays state and disable
+                self.show_overlays = self.active_space_data.overlay.show_overlays
+                self.show_gizmo = self.active_space_data.show_gizmo
+                self.active_space_data.overlay.show_overlays = False
+                self.active_space_data.show_gizmo = False
+
 
         if ob and ob.type == 'GREASEPENCIL':
             if context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
@@ -393,6 +404,10 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
     def _exit_modal(self, context):
         if self.onion_skin is not None:
             self.active_space_data.overlay.use_gpencil_onion_skin = self.onion_skin
+        if self.show_overlays is not None:
+            self.active_space_data.overlay.show_overlays = self.show_overlays
+        if self.show_gizmo is not None:
+            self.active_space_data.show_gizmo = self.show_gizmo
         if self.multi_frame:
             context.scene.tool_settings.use_grease_pencil_multi_frame_editing = self.multi_frame
         if self.hud and self.viewtype:
@@ -675,6 +690,11 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
              'Keyframe displayed as diamonds', 'HANDLETYPE_FREE_VEC', 2),
         ))
 
+    hide_overlays: BoolProperty(
+        name="Hide Overlays",
+        description="Hide overlays and gizmos while scrubbing is active",
+        default=False
+    )
 
 def draw_ts_pref(prefs, layout):
     # - General settings
@@ -734,11 +754,13 @@ def draw_ts_pref(prefs, layout):
         box.label(
             text="Recommended to choose at least one modifier to combine with clicks (default: Ctrl+Alt)", icon="ERROR")
 
-    row = box.row()
+    col = box.column(align=False)
+    row = col.row()
     row.prop(prefs, 'always_snap')
     row.prop(prefs, 'rolling_mode')
-    box.prop(prefs, 'use_in_timeline_editor',
-             text='Add same shortcut to scrub within timeline editors')
+    row = col.row()
+    row.prop(prefs, 'use_in_timeline_editor', text='Add same shortcut to scrub within timeline editors')
+    row.prop(prefs, 'hide_overlays')
 
     # - HUD/OSD
     box = layout.box()
